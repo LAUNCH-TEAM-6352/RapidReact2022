@@ -16,4 +16,27 @@ package frc.robot;
  */
 public final class Constants
 {
+	public static final class DriveTrainConstants
+	{
+		public static final int leftFrontMotorChannel = 10;
+		public static final int leftRearMotorChannel = 11;
+		public static final int leftTopMotorChannel = 12;
+		public static final int rightFrontMotorChannel = 13;
+		public static final int rightRearMotorChannel = 14;
+		public static final int rightTopMotorChannel = 15;
+
+        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+
+		public static final boolean leftMotorsInverted = true;
+		public static final boolean rightMotorsInverted = false;
+	}
+    
+	public static final class OIConstants
+	{
+		public static final int xboxControllerPort = 1;
+		public static final int leftJoystickPort = 2;
+		public static final int rightJoystickPort = 3;
+	}
+
 }
