@@ -30,6 +30,8 @@ public final class Constants
 
 		public static final boolean leftMotorsInverted = true;
 		public static final boolean rightMotorsInverted = false;
+
+        public static final double defaultPercentage = 0.5;
 	}
     
 	public static final class OIConstants
@@ -37,6 +39,12 @@ public final class Constants
 		public static final int xboxControllerPort = 1;
 		public static final int leftJoystickPort = 2;
 		public static final int rightJoystickPort = 3;
+	}
+
+    public static final class DashboardConstants
+	{
+		public static final String driveTrainPercentageKey = "Drive Train %";
+		public static final String driveTrainPositionKey = "Drive Train Pos";
 	}
 
 }

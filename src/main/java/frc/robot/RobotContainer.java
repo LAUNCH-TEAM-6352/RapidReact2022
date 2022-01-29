@@ -7,10 +7,15 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.DashboardConstants;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveWithGameController;
 import frc.robot.subsystems.DriveTrain;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.StartEndCommand;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -26,8 +31,9 @@ public class RobotContainer
 
     // OI devices:
 	private final XboxController gameController;
-	private final Joystick leftStick;
-	private final Joystick rightStick;
+
+	private final Joystick leftStick = null;
+	private final Joystick rightStick = null;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -36,8 +42,10 @@ public class RobotContainer
     {        
         // Create OI devices:
 		gameController = new XboxController(OIConstants.xboxControllerPort);
+        /*
 		leftStick = new Joystick(OIConstants.leftJoystickPort);
 		rightStick = new Joystick(OIConstants.rightJoystickPort);
+        */
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
@@ -48,6 +56,9 @@ public class RobotContainer
 
         // Configure the button bindings
         configureButtonBindings();
+
+        // Initialize the Smart Dashboard:
+        initSmartDashboard();
     }
 
     /**
@@ -58,6 +69,20 @@ public class RobotContainer
      */
     private void configureButtonBindings()
     {
+        SmartDashboard.putData("Run Drive Train", new StartEndCommand(
+			() -> driveTrain.setRawMotorOutputs(
+				SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
+			() -> driveTrain.stop(),
+			driveTrain
+			)
+        );
+
+        SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+    }
+
+    private void initSmartDashboard()
+    {
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPercentageKey, DriveTrainConstants.defaultPercentage);
     }
 
     /**
