@@ -13,6 +13,7 @@ import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveWithGameController;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.PneumaticPrototype;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -28,6 +29,7 @@ public class RobotContainer
 {
     // Subsystems:
     private final DriveTrain driveTrain;
+    private final PneumaticPrototype pneumaticPrototype;
 
     // OI devices:
 	private final XboxController gameController;
@@ -49,6 +51,7 @@ public class RobotContainer
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
+        pneumaticPrototype = new PneumaticPrototype();
 
         // Configure default commands:
         driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
@@ -78,6 +81,7 @@ public class RobotContainer
         );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+        SmartDashboard.putData("Toggle Solenoid", new InstantCommand(() -> pneumaticPrototype.toggleExamplePH()));
     }
 
     private void initSmartDashboard()
