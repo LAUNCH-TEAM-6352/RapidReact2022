@@ -14,8 +14,10 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DashboardConstants;
 
 public class DriveTrain extends SubsystemBase
 {
@@ -62,7 +64,7 @@ public class DriveTrain extends SubsystemBase
      */
     public void driveCaution(Joystick leftStick, Joystick rightStick)
     {
-        setLeftRightMotorOutputs(leftStick.getY() - rightStick.getX(), leftStick.getY() + rightStick.getX());
+        setTunedMotorOutputs(leftStick.getY() - rightStick.getX(), leftStick.getY() + rightStick.getX());
     }
 
     /**
@@ -71,7 +73,7 @@ public class DriveTrain extends SubsystemBase
      */
     public void driveCaution(XboxController controller)
     {
-        setLeftRightMotorOutputs(controller.getLeftY() - controller.getRightX(), controller.getLeftY() + controller.getRightX());
+        setTunedMotorOutputs(controller.getLeftY() - controller.getRightX(), controller.getLeftY() + controller.getRightX());
     }
 
     /**
@@ -80,13 +82,26 @@ public class DriveTrain extends SubsystemBase
      * @param left
      * @param right
      */
-    public void setLeftRightMotorOutputs(double left, double right)
+    public void setTunedMotorOutputs(double left, double right)
     {
         left = MathUtil.clamp(left, -1.0, +1.0);
         right = MathUtil.clamp(right, -1.0, +1.0);
         
         leftMotors.get(0).set(Math.copySign(left * left, left));
         rightMotors.get(0).set(Math.copySign(right * right, right));
+    }
+
+    /**
+     * Sets un-tuned motor percentages.
+     * 
+     * @param percentage
+     */
+    public void setRawMotorOutputs(double percentage)
+    {
+        percentage = MathUtil.clamp(percentage, -1.0, +1.0);
+        
+        leftMotors.get(0).set(percentage);
+        rightMotors.get(0).set(percentage);
     }
 
 	/**
@@ -98,9 +113,14 @@ public class DriveTrain extends SubsystemBase
 		rightMotors.get(0).set(0);
 	}
 
+    public void resetPosition()
+    {
+        leftMotors.get(0).getEncoder().setPosition(0.0);
+    }
+
     @Override
     public void periodic()
     {
-        // This method will be called once per scheduler run
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPositionKey, leftMotors.get(0).getEncoder().getPosition());
     }
 }
