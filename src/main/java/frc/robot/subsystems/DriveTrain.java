@@ -35,7 +35,7 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(Constants.DriveTrainConstants.leftMotorChannels[i], MotorType.kBrushless);
             motor.restoreFactoryDefaults();
             motor.setInverted(Constants.DriveTrainConstants.leftMotorsInverted);
-            motor.setIdleMode(IdleMode.kBrake);
+            motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
             if (i > 0)
             {
                 motor.follow(leftMotors.get(0));
@@ -48,7 +48,7 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(Constants.DriveTrainConstants.rightMotorChannels[i], MotorType.kBrushless);
             motor.restoreFactoryDefaults();
             motor.setInverted(Constants.DriveTrainConstants.rightMotorsInverted);
-            motor.setIdleMode(IdleMode.kBrake);
+            motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
             if (i > 0)
             {
                 motor.follow(rightMotors.get(0));

@@ -52,7 +52,8 @@ public class RobotContainer
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
-        pneumaticPrototype = new PneumaticPrototype();
+        pneumaticPrototype = null;
+        //pneumaticPrototype = new PneumaticPrototype();
 
         // Configure default commands:
         //driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
@@ -82,7 +83,7 @@ public class RobotContainer
         );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
-        SmartDashboard.putData("Toggle Solenoid", new InstantCommand(() -> pneumaticPrototype.toggleExamplePH()));
+        //SmartDashboard.putData("Toggle Solenoid", new InstantCommand(() -> pneumaticPrototype.toggleExamplePH()));
     }
 
     private void initSmartDashboard()

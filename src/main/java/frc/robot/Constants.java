@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax.IdleMode;
+
+import edu.wpi.first.wpilibj.PneumaticsModuleType;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
  * numerical or boolean constants. This class should not be used for any other
@@ -25,13 +29,16 @@ public final class Constants
 		public static final int rightRearMotorChannel = 14;
 		public static final int rightTopMotorChannel = 15;
 
-        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        //public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        public static final int[] leftMotorChannels = {leftRearMotorChannel, leftTopMotorChannel};
         public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
 
 		public static final boolean leftMotorsInverted = true;
 		public static final boolean rightMotorsInverted = false;
 
         public static final double defaultPercentage = 0.5;
+
+        public static final IdleMode idleMode = IdleMode.kCoast;
 	}
     
 	public static final class OIConstants
@@ -39,6 +46,11 @@ public final class Constants
 		public static final int xboxControllerPort = 1;
 		public static final int leftJoystickPort = 2;
 		public static final int rightJoystickPort = 3;
+	}
+    
+	public static final class PneumaticsConstants
+	{
+		public static final PneumaticsModuleType moduleType = PneumaticsModuleType.CTREPCM;
 	}
 
     public static final class DashboardConstants
