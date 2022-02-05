@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.PneumaticsConstants;
 
 public class PneumaticPrototype extends SubsystemBase
 {
@@ -17,8 +18,8 @@ public class PneumaticPrototype extends SubsystemBase
     /** Creates a new PneumaticPrototype. */
     public PneumaticPrototype()
     {
-        phCompressor = new Compressor(1, PneumaticsModuleType.REVPH);
-        exampleSinglePH = new Solenoid(PneumaticsModuleType.REVPH, 0);
+        phCompressor = new Compressor(1, PneumaticsConstants.moduleType);
+        exampleSinglePH = new Solenoid(PneumaticsConstants.moduleType, 0);
     }
 
     public void toggleExamplePH()
