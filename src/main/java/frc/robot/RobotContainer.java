@@ -12,7 +12,9 @@ import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.DriveWithGameController;
+import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.PneumaticPrototype;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
@@ -28,12 +30,13 @@ public class RobotContainer
 {
     // Subsystems:
     private final DriveTrain driveTrain;
+    private final PneumaticPrototype pneumaticPrototype;
 
     // OI devices:
 	private final XboxController gameController;
 
-	private final Joystick leftStick = null;
-	private final Joystick rightStick = null;
+	private Joystick leftStick = null;
+	private Joystick rightStick = null;
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -42,17 +45,18 @@ public class RobotContainer
     {        
         // Create OI devices:
 		gameController = new XboxController(OIConstants.xboxControllerPort);
-        /*
+        
 		leftStick = new Joystick(OIConstants.leftJoystickPort);
 		rightStick = new Joystick(OIConstants.rightJoystickPort);
-        */
+    
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
+        pneumaticPrototype = new PneumaticPrototype();
 
         // Configure default commands:
-        driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
-        //driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
+        //driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
+        driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -78,6 +82,7 @@ public class RobotContainer
         );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+        SmartDashboard.putData("Toggle Solenoid", new InstantCommand(() -> pneumaticPrototype.toggleExamplePH()));
     }
 
     private void initSmartDashboard()
