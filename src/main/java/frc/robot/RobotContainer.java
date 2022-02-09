@@ -52,12 +52,12 @@ public class RobotContainer
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
-        pneumaticPrototype = null;
-        //pneumaticPrototype = new PneumaticPrototype();
+        //pneumaticPrototype = null;
+        pneumaticPrototype = new PneumaticPrototype();
 
         // Configure default commands:
-        //driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
-        driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
+        driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
+        //driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
 
         // Configure the button bindings
         configureButtonBindings();
@@ -83,7 +83,9 @@ public class RobotContainer
         );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
-        //SmartDashboard.putData("Toggle Solenoid", new InstantCommand(() -> pneumaticPrototype.toggleExamplePH()));
+        SmartDashboard.putData("Solenoid Off", new InstantCommand(() -> pneumaticPrototype.setOff()));
+        SmartDashboard.putData("Solenoid Forward", new InstantCommand(() -> pneumaticPrototype.setForward()));
+        SmartDashboard.putData("Solenoid Reverse", new InstantCommand(() -> pneumaticPrototype.setReverse()));
     }
 
     private void initSmartDashboard()

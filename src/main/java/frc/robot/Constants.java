@@ -22,15 +22,14 @@ public final class Constants
 {
 	public static final class DriveTrainConstants
 	{
-		public static final int leftFrontMotorChannel = 10;
-		public static final int leftRearMotorChannel = 11;
-		public static final int leftTopMotorChannel = 12;
-		public static final int rightFrontMotorChannel = 13;
-		public static final int rightRearMotorChannel = 14;
-		public static final int rightTopMotorChannel = 15;
+		public static final int leftFrontMotorChannel = 14;
+		public static final int leftRearMotorChannel = 13;
+		public static final int leftTopMotorChannel = 15;
+		public static final int rightFrontMotorChannel = 11;
+		public static final int rightRearMotorChannel = 10;
+		public static final int rightTopMotorChannel = 12;
 
-        //public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
-        public static final int[] leftMotorChannels = {leftRearMotorChannel, leftTopMotorChannel};
+        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
         public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
 
 		public static final boolean leftMotorsInverted = true;

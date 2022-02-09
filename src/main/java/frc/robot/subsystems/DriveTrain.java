@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -30,35 +29,30 @@ public class DriveTrain extends SubsystemBase
         leftMotors = new ArrayList<CANSparkMax>();
         rightMotors = new ArrayList<CANSparkMax>();
 
-        for (int i = 0; i < Constants.DriveTrainConstants.leftMotorChannels.length; i++)
+        for (int channel : Constants.DriveTrainConstants.leftMotorChannels)
         {
-            var motor = new CANSparkMax(Constants.DriveTrainConstants.leftMotorChannels[i], MotorType.kBrushless);
+            var motor = new CANSparkMax(channel, MotorType.kBrushless);
             motor.restoreFactoryDefaults();
+            motor.clearFaults();
             motor.setInverted(Constants.DriveTrainConstants.leftMotorsInverted);
             motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
-            if (i > 0)
-            {
-                motor.follow(leftMotors.get(0));
-            }
             leftMotors.add(motor);
         }
 
-        for (int i = 0; i < Constants.DriveTrainConstants.rightMotorChannels.length; i++)
+        for (int channel : Constants.DriveTrainConstants.rightMotorChannels)
         {
-            var motor = new CANSparkMax(Constants.DriveTrainConstants.rightMotorChannels[i], MotorType.kBrushless);
+            var motor = new CANSparkMax(channel, MotorType.kBrushless);
             motor.restoreFactoryDefaults();
+            motor.clearFaults();
             motor.setInverted(Constants.DriveTrainConstants.rightMotorsInverted);
             motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
-            if (i > 0)
-            {
-                motor.follow(rightMotors.get(0));
-            }
             rightMotors.add(motor);
         }
     }
         
     /**
      * Team Caution style drive using input from two joysticks, left and right.
+     * 
      * @param leftStick
      * @param rightStick
      */
@@ -68,7 +62,7 @@ public class DriveTrain extends SubsystemBase
     }
 
     /**
-     * Team Caution style drive using input from one Xbox controller.
+     * Team Caution style drive using input from the joysticks on one Xbox controller.
      * @param controller
      */
     public void driveCaution(XboxController controller)
@@ -87,8 +81,8 @@ public class DriveTrain extends SubsystemBase
         left = MathUtil.clamp(left, -1.0, +1.0);
         right = MathUtil.clamp(right, -1.0, +1.0);
         
-        leftMotors.get(0).set(Math.copySign(left * left, left));
-        rightMotors.get(0).set(Math.copySign(right * right, right));
+        setMotorsPercentage(leftMotors, Math.copySign(left * left, left));
+        setMotorsPercentage(rightMotors, Math.copySign(right * right, right));
     }
 
     /**
@@ -100,8 +94,22 @@ public class DriveTrain extends SubsystemBase
     {
         percentage = MathUtil.clamp(percentage, -1.0, +1.0);
         
-        leftMotors.get(0).set(percentage);
-        rightMotors.get(0).set(percentage);
+        setMotorsPercentage(leftMotors, percentage);
+        setMotorsPercentage(rightMotors, percentage);
+    }
+
+    /**
+     * Sets the speeds of the specified motors to the specified percentage.
+     * 
+     * @param motors The motors to adjust.
+     * @param percentage The new percentage. 
+     */
+    private void setMotorsPercentage(List<CANSparkMax> motors, double percentage)
+    {
+        for(CANSparkMax motor: motors)
+        {
+            motor.set(percentage);
+        }
     }
 
 	/**
@@ -109,8 +117,8 @@ public class DriveTrain extends SubsystemBase
 	 */
 	public void stop()
 	{
-		leftMotors.get(0).set(0);
-		rightMotors.get(0).set(0);
+        setMotorsPercentage(leftMotors, 0);
+        setMotorsPercentage(rightMotors, 0);
 	}
 
     public void resetPosition()
