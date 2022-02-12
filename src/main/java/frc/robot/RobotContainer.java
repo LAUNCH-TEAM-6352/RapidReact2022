@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -38,26 +39,37 @@ public class RobotContainer
 	private Joystick leftStick = null;
 	private Joystick rightStick = null;
 
+    // Tells us if we are in development mode, in which some subsystems are not used:
+    private boolean isDevelopmentMode = false;
+
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
      */
     public RobotContainer()
-    {        
+    {     
+        // Determine if we are in dedvelopment mode:
+        isDevelopmentMode = DriverStation.getGameSpecificMessage().toLowerCase().contains("development");
+
         // Create OI devices:
 		gameController = new XboxController(OIConstants.xboxControllerPort);
         
-		leftStick = new Joystick(OIConstants.leftJoystickPort);
-		rightStick = new Joystick(OIConstants.rightJoystickPort);
-    
+        if (!isDevelopmentMode)
+        {
+            leftStick = new Joystick(OIConstants.leftJoystickPort);
+            rightStick = new Joystick(OIConstants.rightJoystickPort);
+        }
 
     	// Create subsystems:
 		driveTrain = new DriveTrain();
-        //pneumaticPrototype = null;
-        pneumaticPrototype = new PneumaticPrototype();
+
+        pneumaticPrototype = isDevelopmentMode ? new PneumaticPrototype() : null;
 
         // Configure default commands:
-        driveTrain.setDefaultCommand(new DriveWithGameController(driveTrain, gameController));
-        //driveTrain.setDefaultCommand(new DriveWithJoysticks(driveTrain, leftStick, rightStick));
+        driveTrain.setDefaultCommand(
+            leftStick != null && rightStick != null
+                ? new DriveWithJoysticks(driveTrain, leftStick, rightStick)
+                : new DriveWithGameController(driveTrain, gameController)
+            );
 
         // Configure the button bindings
         configureButtonBindings();
@@ -83,9 +95,13 @@ public class RobotContainer
         );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
-        SmartDashboard.putData("Solenoid Off", new InstantCommand(() -> pneumaticPrototype.setOff()));
-        SmartDashboard.putData("Solenoid Forward", new InstantCommand(() -> pneumaticPrototype.setForward()));
-        SmartDashboard.putData("Solenoid Reverse", new InstantCommand(() -> pneumaticPrototype.setReverse()));
+
+        if (pneumaticPrototype != null)
+        {
+            SmartDashboard.putData("Solenoid Off", new InstantCommand(() -> pneumaticPrototype.setOff()));
+            SmartDashboard.putData("Solenoid Forward", new InstantCommand(() -> pneumaticPrototype.setForward()));
+            SmartDashboard.putData("Solenoid Reverse", new InstantCommand(() -> pneumaticPrototype.setReverse()));
+        }
     }
 
     private void initSmartDashboard()

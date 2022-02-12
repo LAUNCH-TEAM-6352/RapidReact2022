@@ -58,7 +58,7 @@ public class DriveTrain extends SubsystemBase
      */
     public void driveCaution(Joystick leftStick, Joystick rightStick)
     {
-        setTunedMotorOutputs(leftStick.getY() - rightStick.getX(), leftStick.getY() + rightStick.getX());
+        setTunedOutputs(leftStick.getY() - rightStick.getX(), leftStick.getY() + rightStick.getX());
     }
 
     /**
@@ -67,7 +67,7 @@ public class DriveTrain extends SubsystemBase
      */
     public void driveCaution(XboxController controller)
     {
-        setTunedMotorOutputs(controller.getLeftY() - controller.getRightX(), controller.getLeftY() + controller.getRightX());
+        setTunedOutputs(controller.getLeftY() - controller.getRightX(), controller.getLeftY() + controller.getRightX());
     }
 
     /**
@@ -76,13 +76,13 @@ public class DriveTrain extends SubsystemBase
      * @param left
      * @param right
      */
-    public void setTunedMotorOutputs(double left, double right)
+    public void setTunedOutputs(double left, double right)
     {
         left = MathUtil.clamp(left, -1.0, +1.0);
         right = MathUtil.clamp(right, -1.0, +1.0);
         
-        setMotorsPercentage(leftMotors, Math.copySign(left * left, left));
-        setMotorsPercentage(rightMotors, Math.copySign(right * right, right));
+        setPercentage(leftMotors, Math.copySign(left * left, left));
+        setPercentage(rightMotors, Math.copySign(right * right, right));
     }
 
     /**
@@ -94,8 +94,8 @@ public class DriveTrain extends SubsystemBase
     {
         percentage = MathUtil.clamp(percentage, -1.0, +1.0);
         
-        setMotorsPercentage(leftMotors, percentage);
-        setMotorsPercentage(rightMotors, percentage);
+        setPercentage(leftMotors, percentage);
+        setPercentage(rightMotors, percentage);
     }
 
     /**
@@ -104,9 +104,9 @@ public class DriveTrain extends SubsystemBase
      * @param motors The motors to adjust.
      * @param percentage The new percentage. 
      */
-    private void setMotorsPercentage(List<CANSparkMax> motors, double percentage)
+    private void setPercentage(List<CANSparkMax> motors, double percentage)
     {
-        for(CANSparkMax motor: motors)
+        for (CANSparkMax motor: motors)
         {
             motor.set(percentage);
         }
@@ -117,8 +117,8 @@ public class DriveTrain extends SubsystemBase
 	 */
 	public void stop()
 	{
-        setMotorsPercentage(leftMotors, 0);
-        setMotorsPercentage(rightMotors, 0);
+        setPercentage(leftMotors, 0);
+        setPercentage(rightMotors, 0);
 	}
 
     public void resetPosition()
