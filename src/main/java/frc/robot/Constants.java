@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -22,6 +23,7 @@ public final class Constants
 {
 	public static final class DriveTrainConstants
 	{
+        // Motor controllers are SPARK MAX:
 		public static final int leftFrontMotorChannel = 14;
 		public static final int leftRearMotorChannel = 13;
 		public static final int leftTopMotorChannel = 15;
@@ -50,12 +52,83 @@ public final class Constants
 	public static final class PneumaticsConstants
 	{
 		public static final PneumaticsModuleType moduleType = PneumaticsModuleType.CTREPCM;
+
+        public static final int intakeInChannel = 0;
+        public static final int intakeoutChannel = 1;
+
+        public static final int tbdAChannel = 2;
+        public static final int tbdBChannel = 3;
+	}
+    
+    public static final class IndexerConstants
+    {
+        // Motor controllers are Victor SPX:
+        public static final int upperMotorChannel = 24;
+        public static final int lowerMotorChannel = 25;
+    }
+
+    public static final class IntakeConstants
+    {
+        // Motor controller is Victor SPX:
+        public static final int intakeMotorChannel = 26;
+    }
+
+	public static final class ShooterConstants
+	{
+        // Motor c controllers are Talon SRX:
+		public static final int leftMotorChannel = 22;
+		public static final int rightMotorChannel = 23;
+		public static final boolean isLeftMotorInverted = false;
+		public static final boolean isRightMotorInverted = true;
+
+		public static final double defaultLowVelocity = 1800;
+		public static final double defaultHighVelocity = 2500;
+		public static final double defaultPercentage = 0.5;
+	}
+
+	public static final class ShooterMotorConstants
+	{
+		// This is the max output of the 4:1 gearbox.
+        // This equates to about 3,500 RPM.
+		public static final double peakVelocityUnitsPer100ms = 23800.0;
+
+		public static final int channel = 9;
+		public static final int profileSlot = 0;
+		public static final double pidP = 0.8;
+		public static final double pidI = 0.00001;
+		public static final double pidD = 0.03;
+		public static final int pidIZ = 3000;
+		public static final double pidFF = 1023.0 / peakVelocityUnitsPer100ms;
+		public static final double pidPeakOutput = 1;
+		public static final int pidLoopPeriodMs = 1;
+		public static final double pidMaxIntegralAccum = 0;
+		public static final int pidAllowableError = 0;
+		public static final int pidTimeoutMs = 30;
+		public static final double pidMinOutput = -1.0;
+		public static final double idMaxOutput = 1.0;
+
+		public static final int countsPerRevolution = 1024;
+		public static final int ticksPerCount = 4;
+		public static final int primaryClosedLoop = 0;
+
+		public static final boolean phase = false;
+
+        public static final NeutralMode neutralMode = NeutralMode.Coast;
 	}
 
     public static final class DashboardConstants
 	{
 		public static final String driveTrainPercentageKey = "Drive Train %";
 		public static final String driveTrainPositionKey = "Drive Train Pos";
-	}
+
+		public static final String shooterLowTargetVelocityKey = "Shooter Low RPM";
+		public static final String shooterHighTargetVelocityKey = "Shooter High RPM";
+		public static final String shooterSetVelocityKey = "Shooter Vel Set";
+		public static final String shooterCurrentVelocityLeftKey = "Shooter RPM Left";
+		public static final String shooterCurrentVelocityRightKey = "Shooter RPM Rght";
+        public static final String shooterRampUpTimeKey = "Shooter Ramp Secs";
+
+        public static final String shooterTargetPercentageKey = "Shooter %";
+    }
 
 }
