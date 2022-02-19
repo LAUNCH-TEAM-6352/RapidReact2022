@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Constants.ShooterMotorConstants;
 
 public class Shooter extends SubsystemBase
 {
@@ -49,25 +48,25 @@ public class Shooter extends SubsystemBase
 		for (TalonSRX motor : new TalonSRX[] { leftMotor, rightMotor})
 		{
 			motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-			motor.configAllowableClosedloopError(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidAllowableError,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.configClosedLoopPeakOutput(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidPeakOutput,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.configClosedLoopPeriod(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidLoopPeriodMs,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.config_kP(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidP,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.config_kI(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidI,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.config_kD(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidD,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.config_kF(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidFF,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.config_IntegralZone(ShooterMotorConstants.profileSlot, ShooterMotorConstants.pidIZ,
-					ShooterMotorConstants.pidTimeoutMs);
-			motor.selectProfileSlot(ShooterMotorConstants.profileSlot, ShooterMotorConstants.primaryClosedLoop);
-			motor.setSensorPhase(ShooterMotorConstants.phase);
-            motor.setNeutralMode(ShooterMotorConstants.neutralMode);
+			motor.configAllowableClosedloopError(ShooterConstants.pidProfileSlot, ShooterConstants.pidAllowableError,
+					ShooterConstants.pidTimeoutMs);
+			motor.configClosedLoopPeakOutput(ShooterConstants.pidProfileSlot, ShooterConstants.pidPeakOutput,
+					ShooterConstants.pidTimeoutMs);
+			motor.configClosedLoopPeriod(ShooterConstants.pidProfileSlot, ShooterConstants.pidLoopPeriodMs,
+					ShooterConstants.pidTimeoutMs);
+			motor.config_kP(ShooterConstants.pidProfileSlot, ShooterConstants.pidP,
+					ShooterConstants.pidTimeoutMs);
+			motor.config_kI(ShooterConstants.pidProfileSlot, ShooterConstants.pidI,
+					ShooterConstants.pidTimeoutMs);
+			motor.config_kD(ShooterConstants.pidProfileSlot, ShooterConstants.pidD,
+					ShooterConstants.pidTimeoutMs);
+			motor.config_kF(ShooterConstants.pidProfileSlot, ShooterConstants.pidFF,
+					ShooterConstants.pidTimeoutMs);
+			motor.config_IntegralZone(ShooterConstants.pidProfileSlot, ShooterConstants.pidIZ,
+					ShooterConstants.pidTimeoutMs);
+			motor.selectProfileSlot(ShooterConstants.pidProfileSlot, ShooterConstants.primaryClosedLoop);
+			motor.setSensorPhase(ShooterConstants.isSensorPhaseInverted);
+            motor.setNeutralMode(ShooterConstants.neutralMode);
 		}
 	}
 
@@ -96,7 +95,7 @@ public class Shooter extends SubsystemBase
 		// Velocity is measured in encoder units per 100 ms.
 		// 600.0 is the number of 100ms per minute.
 		var unitsPer100Ms =
-			velocity * ShooterMotorConstants.countsPerRevolution * ShooterMotorConstants.ticksPerCount / 600.0;
+			velocity * ShooterConstants.countsPerRevolution * ShooterConstants.ticksPerCount / 600.0;
 		SmartDashboard.putNumber(DashboardConstants.shooterSetVelocityKey, unitsPer100Ms);
         targetVelocity = velocity;
         lastVelocity = 0;
@@ -129,8 +128,8 @@ public class Shooter extends SubsystemBase
 		// Velocity from motor controller is units per 100ms where there are
 		// countsPerRevolution * ticksPerCount units per revolution.
 		// 600.0 is the number of 100ms per minute.
-        double leftVelocity = 600.0 * leftMotor.getSelectedSensorVelocity() / ShooterMotorConstants.countsPerRevolution / ShooterMotorConstants.ticksPerCount;
-        double rightVelocity = 600.0 * rightMotor.getSelectedSensorVelocity() / ShooterMotorConstants.countsPerRevolution / ShooterMotorConstants.ticksPerCount;
+        double leftVelocity = 600.0 * leftMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
+        double rightVelocity = 600.0 * rightMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
 
 		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey, leftVelocity);	
 		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,  rightVelocity);
@@ -141,6 +140,7 @@ public class Shooter extends SubsystemBase
             {
                 isTimingStarted = false;
                 long stopTime = RobotController.getFPGATime();
+                // The FPGA time is in microseconds, so divide by 1000000.0 to get seconds:
                 SmartDashboard.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
             }
             else

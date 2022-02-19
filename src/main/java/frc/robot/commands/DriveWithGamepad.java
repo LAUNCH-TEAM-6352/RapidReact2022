@@ -8,16 +8,18 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
-public class DriveWithGameController extends CommandBase
+public class DriveWithGamepad extends CommandBase
 {
     private final DriveTrain driveTrain;
-    private final XboxController gameController;
+    private final XboxController gamepad;
 
-    /** Creates a new DriveWithGameController. */
-    public DriveWithGameController(DriveTrain driveTrain, XboxController gameController)
+    /**
+     * Creates a new DriveWithGamepad.
+     */
+    public DriveWithGamepad(DriveTrain driveTrain, XboxController gamepad)
     {
         this.driveTrain = driveTrain;
-        this.gameController = gameController;
+        this.gamepad = gamepad;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(driveTrain);
@@ -33,7 +35,7 @@ public class DriveWithGameController extends CommandBase
     @Override
     public void execute()
     {
-        driveTrain.driveCaution(gameController);
+        driveTrain.driveCaution(gamepad);
     }
 
     // Called once the command ends or is interrupted.

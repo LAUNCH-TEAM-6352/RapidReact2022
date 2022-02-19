@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -14,7 +16,7 @@ import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.DriveWithGameController;
+import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.PneumaticPrototype;
@@ -34,12 +36,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer
 {
     // Subsystems:
-    private final DriveTrain driveTrain;
-    private final PneumaticPrototype pneumaticPrototype;
-    private final Shooter shooter;
+    private final Optional<DriveTrain> driveTrain;
+    private final Optional<PneumaticPrototype> pneumaticPrototype;
+    private final Optional<Shooter> shooter;
 
     // OI devices:
-	private final XboxController gameController;
+	private final XboxController gamepad;
 
 	private Joystick leftStick = null;
 	private Joystick rightStick = null;
@@ -52,41 +54,52 @@ public class RobotContainer
      */
     public RobotContainer()
     {     
-        // Get the game data message fom the driver station:
-
+        // Get the game data message fom the driver station.
+        // This message is primarily used during development to
+        // construct only certain OI devices and subsystems.
+        // If the merssage is blank (or all whitespace),
+        // all OI devices and subsystems are constructed.
+        // Otherwise, OI devices and subsystems are constructed
+        // depending upon the substrings found in the message:
+        //   -js-   Joysticks
+        //   -dt-   Drive train
+        //   -pp-   Pneumatics prototype
+        //   -s-    Shooter
+        //   -int-  Intake
+        //   -idx-  Indexer
+        // 
         gameData = DriverStation.getGameSpecificMessage().toLowerCase();
 
         // Create OI devices:
-		gameController = new XboxController(OIConstants.xboxControllerPort);
+		gamepad = new XboxController(OIConstants.xboxControllerPort);
         
-        if (gameData.isBlank() || gameData.contains("-dtjs-"))
+        if (gameData.isBlank() || gameData.contains("-js-"))
         {
             leftStick = new Joystick(OIConstants.leftJoystickPort);
             rightStick = new Joystick(OIConstants.rightJoystickPort);
         }
 
     	// Create subsystems:
-		driveTrain = gameData.isBlank() || gameData.contains("-dt-") ? new DriveTrain() : null;
+		driveTrain = gameData.isBlank() || gameData.contains("-dt-") ? Optional.of(new DriveTrain()) : Optional.empty();
 
-        pneumaticPrototype = gameData.contains("-pp-") ? new PneumaticPrototype() : null;
+        pneumaticPrototype = gameData.contains("-pp-") ? Optional.of(new PneumaticPrototype()) : Optional.empty();
 
-        shooter = gameData.contains("-s-") ? new Shooter() : null;
+        shooter = gameData.contains("-s-") ? Optional.of(new Shooter()) : Optional.empty();
 
         // Configure default commands:
-        if (driveTrain != null)
-        {
-            driveTrain.setDefaultCommand(
+        driveTrain.ifPresent((dt) ->
+            dt.setDefaultCommand(
                 leftStick != null && rightStick != null
-                    ? new DriveWithJoysticks(driveTrain, leftStick, rightStick)
-                    : new DriveWithGameController(driveTrain, gameController)
-                );
-        }
+                    ? new DriveWithJoysticks(dt, leftStick, rightStick)
+                    : new DriveWithGamepad(dt, gamepad)
+                )
+        );
 
         // Configure the button bindings
         configureButtonBindings();
 
-        // Initialize the Smart Dashboard:
-        initSmartDashboard();
+        // Configure the Smart Dashboard:
+        configureSmartDashboard();
     }
 
     /**
@@ -97,79 +110,111 @@ public class RobotContainer
      */
     private void configureButtonBindings()
     {
-        // Drive Train buttons:
-        if (driveTrain != null)
-        {
-            SmartDashboard.putData("Run Drive Train", new StartEndCommand(
-                () -> driveTrain.setRawMotorOutputs(
-                    SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
-                () -> driveTrain.stop(),
-                driveTrain
-                )
-            );
-        }
-
         // Shooter buttons:
-        if (shooter != null)
-        {
-            // Run/stop the shooter at the speed for the low target:
-            new JoystickButton(gameController, Button.kBack.value)
-                .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
-                    SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
-                    shooter));
-            
-            // Run/stop the shooter at the speed for the high target:
-            new JoystickButton(gameController, Button.kStart.value)
-                .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
-                    SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
-                    shooter));
-        }
+        shooter.ifPresent(this::configureButtonBindings);
+    }
+
+    /**
+     * Configures the button bindings for the shooter.
+     * 
+     * @param shooter
+     */
+    private void configureButtonBindings(Shooter shooter)
+    {
+        // Run/stop the shooter at the speed for the low target:
+        new JoystickButton(gamepad, Button.kBack.value)
+            .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
+                SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
+                shooter));
+        
+        // Run/stop the shooter at the speed for the high target:
+        new JoystickButton(gamepad, Button.kStart.value)
+            .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
+                SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
+                shooter));
+    }
+
+    private void configureSmartDashboard()
+    {
+
+
+
+        driveTrain.ifPresent(this::configureSmartDashboard);
+
+        pneumaticPrototype.ifPresent(this::configureSmartDashboard);
+
+        shooter.ifPresent(this::configureSmartDashboard);
+    }
+
+    /**
+     * Adds the drive train related commands to the Smart Dashboard.
+     * 
+     * @param driveTrain
+     */
+    private void configureSmartDashboard(DriveTrain driveTrain)
+    {
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPercentageKey, DriveTrainConstants.defaultPercentage);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate);
+
+        SmartDashboard.putData("Run Drive Train", new StartEndCommand(
+            () -> driveTrain.setRawMotorOutputs(
+                SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
+            () -> driveTrain.stop(),
+            driveTrain
+            )
+        );
 
         SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
     }
 
-    private void initSmartDashboard()
+    /**
+     * Adds the pneumatic prototype related commands to the Smart Dashboard.
+     * 
+     * @param pneumaticPrototype
+     */
+    private void configureSmartDashboard(PneumaticPrototype pneumaticPrototype)
     {
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPercentageKey, DriveTrainConstants.defaultPercentage);
+        SmartDashboard.putData("Solenoid Off", new InstantCommand(() -> pneumaticPrototype.setOff()));
+        SmartDashboard.putData("Solenoid Forward", new InstantCommand(() -> pneumaticPrototype.setForward()));
+        SmartDashboard.putData("Solenoid Reverse", new InstantCommand(() -> pneumaticPrototype.setReverse()));
+    }
+
+    /**
+     * Adds the shooter erlated commands to the Smart Dashboard.
+     * 
+     * @param shooter
+     */
+    private void configureSmartDashboard(Shooter shooter)
+    {
         SmartDashboard.putNumber(DashboardConstants.shooterLowTargetVelocityKey, ShooterConstants.defaultLowVelocity);
         SmartDashboard.putNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity);
         SmartDashboard.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
 
+        SmartDashboard.putData("Run Shooter Low RPM", new StartEndCommand(
+            () -> shooter.setVelocity(
+                SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
+            () -> shooter.stop(),
+            shooter
+            )
+        );
 
-        if (pneumaticPrototype != null)
-        {
-            SmartDashboard.putData("Solenoid Off", new InstantCommand(() -> pneumaticPrototype.setOff()));
-            SmartDashboard.putData("Solenoid Forward", new InstantCommand(() -> pneumaticPrototype.setForward()));
-            SmartDashboard.putData("Solenoid Reverse", new InstantCommand(() -> pneumaticPrototype.setReverse()));
-        }
+        SmartDashboard.putData("Run Shooter High RPM", new StartEndCommand(
+            () -> shooter.setVelocity(
+                SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
+            () -> shooter.stop(),
+            shooter
+            )
+        );
 
-        if (shooter != null)
-        {
-            SmartDashboard.putData("Run Shooter Low RPM", new StartEndCommand(
-                () -> shooter.setVelocity(
-                    SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
-                () -> shooter.stop(),
-                shooter
-                )
-            );
-
-            SmartDashboard.putData("Run Shooter High RPM", new StartEndCommand(
-                () -> shooter.setVelocity(
-                    SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
-                () -> shooter.stop(),
-                shooter
-                )
-            );
-
-            SmartDashboard.putData("Run Shooter %", new StartEndCommand(
-                () -> shooter.setPercentage(
-                    SmartDashboard.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
-                () -> shooter.stop(),
-                shooter
-                )
-            );
-        }
-    }
+        SmartDashboard.putData("Run Shooter %", new StartEndCommand(
+            () -> shooter.setPercentage(
+                SmartDashboard.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
+            () -> shooter.stop(),
+            shooter
+            )
+        );
+}
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.

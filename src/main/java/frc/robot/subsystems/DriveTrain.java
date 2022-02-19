@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -15,37 +16,37 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.DashboardConstants;
 
 public class DriveTrain extends SubsystemBase
 {
-    private final List<CANSparkMax> leftMotors;
-    private final List<CANSparkMax> rightMotors;
+    // Lists of motors on left and right side of drive train:
+    private final List<CANSparkMax> leftMotors = new ArrayList<CANSparkMax>();
+    private final List<CANSparkMax> rightMotors = new ArrayList<CANSparkMax>();
 
-    /** Creates a new DriveTrain. */
+    /**
+     * Creates a new DriveTrain.
+     */
     public DriveTrain()
     {
-        leftMotors = new ArrayList<CANSparkMax>();
-        rightMotors = new ArrayList<CANSparkMax>();
-
-        for (int channel : Constants.DriveTrainConstants.leftMotorChannels)
+        // Construct the motors on the left side of the drive train:
+        for (int channel : DriveTrainConstants.leftMotorChannels)
         {
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
-            motor.restoreFactoryDefaults();
-            motor.clearFaults();
-            motor.setInverted(Constants.DriveTrainConstants.leftMotorsInverted);
-            motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
+            setCommonConfig(motor);
+            motor.setInverted(DriveTrainConstants.isLeftMotorInverted);
+            motor.getEncoder().setInverted(DriveTrainConstants.isLeftEncoderInverted);
             leftMotors.add(motor);
         }
 
-        for (int channel : Constants.DriveTrainConstants.rightMotorChannels)
+        // Construct the motors on the right side of the drive train:
+        for (int channel : DriveTrainConstants.rightMotorChannels)
         {
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
-            motor.restoreFactoryDefaults();
-            motor.clearFaults();
-            motor.setInverted(Constants.DriveTrainConstants.rightMotorsInverted);
-            motor.setIdleMode(Constants.DriveTrainConstants.idleMode);
+            setCommonConfig(motor);
+            motor.setInverted(DriveTrainConstants.areRightMotorsInverted);
+            motor.getEncoder().setInverted(DriveTrainConstants.isRightEncoderInverted);
             rightMotors.add(motor);
         }
     }
@@ -63,6 +64,7 @@ public class DriveTrain extends SubsystemBase
 
     /**
      * Team Caution style drive using input from the joysticks on one Xbox controller.
+     * 
      * @param controller
      */
     public void driveCaution(XboxController controller)
@@ -80,9 +82,15 @@ public class DriveTrain extends SubsystemBase
     {
         left = MathUtil.clamp(left, -1.0, +1.0);
         right = MathUtil.clamp(right, -1.0, +1.0);
+
+        double leftOut = Math.copySign(left * left, left);
+        double rightOut = Math.copySign(right * right, right);
         
-        setPercentage(leftMotors, Math.copySign(left * left, left));
-        setPercentage(rightMotors, Math.copySign(right * right, right));
+        setPercentage(leftMotors, leftOut);
+        setPercentage(rightMotors, rightOut);
+
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, leftOut);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, rightOut);
     }
 
     /**
@@ -93,32 +101,24 @@ public class DriveTrain extends SubsystemBase
     public void setRawMotorOutputs(double percentage)
     {
         percentage = MathUtil.clamp(percentage, -1.0, +1.0);
-        
+
         setPercentage(leftMotors, percentage);
         setPercentage(rightMotors, percentage);
-    }
 
-    /**
-     * Sets the speeds of the specified motors to the specified percentage.
-     * 
-     * @param motors The motors to adjust.
-     * @param percentage The new percentage. 
-     */
-    private void setPercentage(List<CANSparkMax> motors, double percentage)
-    {
-        for (CANSparkMax motor: motors)
-        {
-            motor.set(percentage);
-        }
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, percentage);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, percentage);
     }
 
 	/**
-	 * Stop the drive;
+	 * Stop the drive.
 	 */
 	public void stop()
 	{
         setPercentage(leftMotors, 0);
         setPercentage(rightMotors, 0);
+
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, 0);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, 0);
 	}
 
     public void resetPosition()
@@ -129,6 +129,47 @@ public class DriveTrain extends SubsystemBase
     @Override
     public void periodic()
     {
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPositionKey, leftMotors.get(0).getEncoder().getPosition());
+        if (!leftMotors.isEmpty())
+        {
+            SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPositionKey, leftMotors.get(0).getEncoder().getPosition());
+        }
+
+        if (!rightMotors.isEmpty())
+        {
+            SmartDashboard.putNumber(DashboardConstants.driveTrainRightPositionKey, rightMotors.get(0).getEncoder().getPosition());
+        }
+    }
+
+    /**
+     * Sets configuration values common to all motors.
+     * 
+     * @param motor
+     */
+    private void setCommonConfig(CANSparkMax motor)
+    {
+        motor.restoreFactoryDefaults();
+        motor.clearFaults();
+        motor.setIdleMode(DriveTrainConstants.idleMode);
+        motor.setOpenLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, 0.0));
+        motor.setClosedLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, 0.0));
+
+        // Set PID controller parameters:
+        SparkMaxPIDController pidController = motor.getPIDController();
+        pidController.setP(DriveTrainConstants.pidP);
+        pidController.setI(DriveTrainConstants.pidI);
+        pidController.setD(DriveTrainConstants.pidD);
+        pidController.setIZone(DriveTrainConstants.pidIZ);
+        pidController.setOutputRange(DriveTrainConstants.pidMinOutput, DriveTrainConstants.pidMaxOutput);
+    }
+
+    /**
+     * Sets the speeds of the specified motors to the specified percentage.
+     * 
+     * @param motors The motors to adjust.
+     * @param percentage The new percentage. 
+     */
+    private void setPercentage(List<CANSparkMax> motors, double percentage)
+    {
+        motors.forEach((motor) -> motor.set(percentage));
     }
 }
