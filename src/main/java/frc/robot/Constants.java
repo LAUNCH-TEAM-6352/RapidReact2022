@@ -21,6 +21,13 @@ import edu.wpi.first.wpilibj.PneumaticsModuleType;
  */
 public final class Constants
 {
+	public static final class OIConstants
+	{
+		public static final int xboxControllerPort = 1;
+		public static final int leftJoystickPort = 2;
+		public static final int rightJoystickPort = 3;
+	}
+    
 	public static final class DriveTrainConstants
 	{
         // Motor controllers are SPARK MAX:
@@ -31,22 +38,35 @@ public final class Constants
 		public static final int rightRearMotorChannel = 10;
 		public static final int rightTopMotorChannel = 12;
 
-        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
-        public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+        //public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        //public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+        public static final int[] leftMotorChannels = {};
+        public static final int[] rightMotorChannels = {};
 
-		public static final boolean leftMotorsInverted = true;
-		public static final boolean rightMotorsInverted = false;
+        // Indicates if motor controller should output negative of commanded percentage:
+		public static final boolean isLeftMotorInverted = true;
+		public static final boolean areRightMotorsInverted = false;
 
-        public static final double defaultPercentage = 0.5;
+        // Indicates if encoder signal is inverted:
+        public static final boolean isLeftEncoderInverted = false;
+        public static final boolean isRightEncoderInverted = false;
 
+        // If motors shjould coast or brake to a stop:
         public static final IdleMode idleMode = IdleMode.kCoast;
-	}
-    
-	public static final class OIConstants
-	{
-		public static final int xboxControllerPort = 1;
-		public static final int leftJoystickPort = 2;
-		public static final int rightJoystickPort = 3;
+
+        // Values for PID controller used for driving to a specific position:
+        public static final double pidP = 0.08;
+        public static final double pidI = 0.00001;
+        public static final double pidD = 1.0;
+        public static final double pidIZ = 10.0;
+        public static final double pidFF = 0.0;
+        public static final double pidMaxOutput = +0.5;
+        public static final double pidMinOutput = -0.5;
+
+        // Default values for Smart Dashboard:
+        public static final double defaultPercentage = 0.5;
+        public static final double defaultOpenLoopRampRate = 0.0;
+        public static final double defaultClosedLoopRampRate = 0.0;
 	}
     
 	public static final class PneumaticsConstants
@@ -75,7 +95,7 @@ public final class Constants
 
 	public static final class ShooterConstants
 	{
-        // Motor c controllers are Talon SRX:
+        // Motor controllers are Talon SRX:
 		public static final int leftMotorChannel = 22;
 		public static final int rightMotorChannel = 23;
 		public static final boolean isLeftMotorInverted = false;
@@ -84,16 +104,13 @@ public final class Constants
 		public static final double defaultLowVelocity = 1800;
 		public static final double defaultHighVelocity = 2500;
 		public static final double defaultPercentage = 0.5;
-	}
 
-	public static final class ShooterMotorConstants
-	{
-		// This is the max output of the 4:1 gearbox.
+        // This is the max output of the 4:1 gearbox.
         // This equates to about 3,500 RPM.
 		public static final double peakVelocityUnitsPer100ms = 23800.0;
 
-		public static final int channel = 9;
-		public static final int profileSlot = 0;
+        // PID constants:
+		public static final int pidProfileSlot = 0;
 		public static final double pidP = 0.8;
 		public static final double pidI = 0.00001;
 		public static final double pidD = 0.03;
@@ -104,22 +121,26 @@ public final class Constants
 		public static final double pidMaxIntegralAccum = 0;
 		public static final int pidAllowableError = 0;
 		public static final int pidTimeoutMs = 30;
-		public static final double pidMinOutput = -1.0;
-		public static final double idMaxOutput = 1.0;
 
+        // Encoder constants:
 		public static final int countsPerRevolution = 1024;
 		public static final int ticksPerCount = 4;
 		public static final int primaryClosedLoop = 0;
+		public static final boolean isSensorPhaseInverted = false;
 
-		public static final boolean phase = false;
-
+        // Indicates if motors should coast or brake to a stop:
         public static final NeutralMode neutralMode = NeutralMode.Coast;
 	}
 
     public static final class DashboardConstants
 	{
 		public static final String driveTrainPercentageKey = "Drive Train %";
-		public static final String driveTrainPositionKey = "Drive Train Pos";
+		public static final String driveTrainLeftPositionKey = "DT Left Pos";
+		public static final String driveTrainRightPositionKey = "DT Right Pos";
+		public static final String driveTrainOpenLoopRampRateKey = "OL Ramp Rate (secs)";
+		public static final String driveTrainClosedLoopRampRateKey = "CL Ramp Rate (secs)";
+        public static final String driveTrainLeftPercentOutput = "DT Left % Output";
+        public static final String driveTrainRightPercentOutput = "DT Right % Output";
 
 		public static final String shooterLowTargetVelocityKey = "Shooter Low RPM";
 		public static final String shooterHighTargetVelocityKey = "Shooter High RPM";
