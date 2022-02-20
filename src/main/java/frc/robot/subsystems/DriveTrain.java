@@ -36,7 +36,7 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.isLeftMotorInverted);
-            motor.getEncoder().setInverted(DriveTrainConstants.isLeftEncoderInverted);
+            //motor.getEncoder().setInverted(DriveTrainConstants.isLeftEncoderInverted);
             leftMotors.add(motor);
         }
 
@@ -46,7 +46,7 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.areRightMotorsInverted);
-            motor.getEncoder().setInverted(DriveTrainConstants.isRightEncoderInverted);
+            //motor.getEncoder().setInverted(DriveTrainConstants.isRightEncoderInverted);
             rightMotors.add(motor);
         }
     }
@@ -89,8 +89,8 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, leftOut);
         setPercentage(rightMotors, rightOut);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, leftOut);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, rightOut);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, leftOut);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, rightOut);
     }
 
     /**
@@ -105,8 +105,8 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, percentage);
         setPercentage(rightMotors, percentage);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, percentage);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, percentage);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, percentage);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, percentage);
     }
 
 	/**
@@ -117,13 +117,21 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, 0);
         setPercentage(rightMotors, 0);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutput, 0);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutput, 0);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, 0);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, 0);
 	}
 
     public void resetPosition()
     {
-        leftMotors.get(0).getEncoder().setPosition(0.0);
+        if (!leftMotors.isEmpty())
+        {
+            leftMotors.get(0).getEncoder().setPosition(0.0);
+        }
+
+        if (!rightMotors.isEmpty())
+        {
+            rightMotors.get(0).getEncoder().setPosition(0.0);
+        }
     }
 
     @Override
