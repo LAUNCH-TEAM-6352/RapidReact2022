@@ -4,39 +4,56 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
-public class DriveWithGamepad extends CommandBase
+public class DriveToPosition extends CommandBase
 {
     private final DriveTrain driveTrain;
-    private final XboxController gamepad;
+	private String key = null;
+	private double position;
 
-    /**
-     * Creates a new DriveWithGamepad.
-     */
-    public DriveWithGamepad(DriveTrain driveTrain, XboxController gamepad)
+    private DriveToPosition(DriveTrain driveTrain)
     {
         this.driveTrain = driveTrain;
-        this.gamepad = gamepad;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(driveTrain);
+
+        // Forces command to stop after 5 seconds:
+        withTimeout(5);
     }
+
+	public DriveToPosition(DriveTrain driveTrain, String key)
+	{
+		this(driveTrain);
+		this.key = key;
+	}
+
+	public DriveToPosition(DriveTrain driveTrain, double position)
+	{
+		this(driveTrain);
+		this.position = position;
+	}
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize()
     {
-        driveTrain.configureForDriverControl();
+        if (key != null)
+        {
+            position = SmartDashboard.getNumber(key, 0.0);
+        }
+        driveTrain.configureForPidControl();
+        driveTrain.resetPosition();
+        driveTrain.driveToPosition(position);
     }
 
     // Called every time the scheduler runs while the command is scheduled.
     @Override
     public void execute()
     {
-        driveTrain.driveCaution(gamepad);
     }
 
     // Called once the command ends or is interrupted.
@@ -50,6 +67,6 @@ public class DriveWithGamepad extends CommandBase
     @Override
     public boolean isFinished()
     {
-        return false;
+        return driveTrain.isAtTargetPosition();
     }
 }

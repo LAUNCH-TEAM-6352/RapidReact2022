@@ -18,6 +18,7 @@ import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.commands.DriveToPosition;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.RunIndexerLower;
@@ -29,6 +30,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PneumaticPrototype;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -205,6 +207,16 @@ public class RobotContainer
         SmartDashboard.putNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
         SmartDashboard.putNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate);
 
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput);
+
+        SmartDashboard.putNumber(DashboardConstants.driveTrainAutoTargetPositionKey, DriveTrainConstants.defaultAutoTargetPosition);
+
         SmartDashboard.putData("Run Drive Train", new StartEndCommand(
             () -> driveTrain.setRawMotorOutputs(
                 SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
@@ -213,7 +225,11 @@ public class RobotContainer
             )
         );
 
-        SmartDashboard.putData("Reset Drive Train Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+        DriveToPosition cmd = new DriveToPosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey);
+        CommandGroupBase.clearGroupedCommand(cmd);
+        SmartDashboard.putData("Drive to Position", cmd);
+
+        SmartDashboard.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
     }
 
     /**

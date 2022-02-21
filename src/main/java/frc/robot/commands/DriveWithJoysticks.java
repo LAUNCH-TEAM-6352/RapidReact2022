@@ -29,6 +29,7 @@ public class DriveWithJoysticks extends CommandBase
     @Override
     public void initialize()
     {
+        driveTrain.configureForDriverControl();
     }
 
     // Called every time the scheduler runs while the command is scheduled.

@@ -9,6 +9,8 @@ import java.util.List;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.math.MathUtil;
@@ -24,6 +26,8 @@ public class DriveTrain extends SubsystemBase
     // Lists of motors on left and right side of drive train:
     private final List<CANSparkMax> leftMotors = new ArrayList<CANSparkMax>();
     private final List<CANSparkMax> rightMotors = new ArrayList<CANSparkMax>();
+    private CANSparkMax pidLeader = null;
+    private double targetPosition;
 
     /**
      * Creates a new DriveTrain.
@@ -36,7 +40,6 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.isLeftMotorInverted);
-            //motor.getEncoder().setInverted(DriveTrainConstants.isLeftEncoderInverted);
             leftMotors.add(motor);
         }
 
@@ -46,9 +49,77 @@ public class DriveTrain extends SubsystemBase
             var motor = new CANSparkMax(channel, MotorType.kBrushless);
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.areRightMotorsInverted);
-            //motor.getEncoder().setInverted(DriveTrainConstants.isRightEncoderInverted);
             rightMotors.add(motor);
         }
+    }
+
+    /**
+     * Sets up PID controller and leader and followers for PID control.
+     */
+    public void configureForPidControl()
+    {
+        // set up leader and followers:
+        pidLeader = null;
+        leftMotors.forEach((motor) ->
+        {
+            // Make the first left motor the leader for PID:
+            if (pidLeader == null)
+            {
+                pidLeader = motor;
+            }
+            else
+            {
+                motor.follow(pidLeader);
+            }
+        });
+
+        rightMotors.forEach((motor) ->
+        {
+            motor.follow(pidLeader, DriveTrainConstants.isLeftMotorInverted != DriveTrainConstants.areRightMotorsInverted);
+        });
+        
+        // Set PID controller parameters on the leader:
+        SparkMaxPIDController pidController = pidLeader.getPIDController();
+        pidController.setP(SmartDashboard.getNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP));
+        pidController.setI(SmartDashboard.getNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI));
+        pidController.setD(SmartDashboard.getNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD));
+        pidController.setIZone(SmartDashboard.getNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ));
+        pidController.setFF(SmartDashboard.getNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF));
+        pidController.setOutputRange(
+            SmartDashboard.getNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput),
+            SmartDashboard.getNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput));
+    }
+
+    /**
+     * Make sure motor controllers are configured for driver control:
+     */
+    public void configureForDriverControl()
+    {
+        leftMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
+        rightMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
+    }
+
+    /**
+     * Using a PID controller, drives the robot to a specific position,
+     * where position is expresed in encoder rotations.
+     * 
+     * @param position encoder counts
+     */
+    public void driveToPosition(double position)
+    {
+        targetPosition = position;
+        pidLeader.getPIDController().setReference(position, ControlType.kPosition);
+        SmartDashboard.putNumber(DashboardConstants.driveTrainPidTarget, position);
+    }
+
+    /**
+     * Determines if PID controller is at target position.
+     * 
+     * @return true if at the target position
+     */
+    public boolean isAtTargetPosition()
+    {
+        return Math.abs(pidLeader.getEncoder().getPosition() - targetPosition) < DriveTrainConstants.positionTolerance;
     }
         
     /**
@@ -114,24 +185,20 @@ public class DriveTrain extends SubsystemBase
 	 */
 	public void stop()
 	{
-        setPercentage(leftMotors, 0);
-        setPercentage(rightMotors, 0);
+        leftMotors.forEach((motor) -> motor.stopMotor());
+        rightMotors.forEach((motor) -> motor.stopMotor());
 
         SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, 0);
         SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, 0);
 	}
 
+    /**
+     * Resets encoder position on all motors.
+     */
     public void resetPosition()
     {
-        if (!leftMotors.isEmpty())
-        {
-            leftMotors.get(0).getEncoder().setPosition(0.0);
-        }
-
-        if (!rightMotors.isEmpty())
-        {
-            rightMotors.get(0).getEncoder().setPosition(0.0);
-        }
+        leftMotors.forEach((motor) -> motor.getEncoder().setPosition(0));
+        rightMotors.forEach((motor) -> motor.getEncoder().setPosition(0));
     }
 
     @Override
@@ -160,14 +227,6 @@ public class DriveTrain extends SubsystemBase
         motor.setIdleMode(DriveTrainConstants.idleMode);
         motor.setOpenLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, 0.0));
         motor.setClosedLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, 0.0));
-
-        // Set PID controller parameters:
-        SparkMaxPIDController pidController = motor.getPIDController();
-        pidController.setP(DriveTrainConstants.pidP);
-        pidController.setI(DriveTrainConstants.pidI);
-        pidController.setD(DriveTrainConstants.pidD);
-        pidController.setIZone(DriveTrainConstants.pidIZ);
-        pidController.setOutputRange(DriveTrainConstants.pidMinOutput, DriveTrainConstants.pidMaxOutput);
     }
 
     /**
