@@ -38,10 +38,8 @@ public final class Constants
 		public static final int rightRearMotorChannel = 10;
 		public static final int rightTopMotorChannel = 12;
 
-        //public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
-        //public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
-        public static final int[] leftMotorChannels = {};
-        public static final int[] rightMotorChannels = {};
+        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
 
         // Indicates if motor controller should output negative of commanded percentage:
 		public static final boolean isLeftMotorInverted = true;
@@ -85,12 +83,31 @@ public final class Constants
         // Motor controllers are Victor SPX:
         public static final int upperMotorChannel = 24;
         public static final int lowerMotorChannel = 25;
+
+        // Want to use positive percentage values for "in".
+        // May need to invert those to get the motors running in the right directions:
+        public static boolean isUpperMotorInverted = false;
+        public static boolean isLowerMotorInverted = true;
+
+        // Default "speed" values:
+        public static double defaultLowerMotorInSpeed = 0.50;
+        public static double defaultLowerMotorOutSpeed = -0.60;
+        public static double defaultUpperMotorInSpeed = 0.50;
+        public static double defaultUpperMotorOutSpeed = -0.60;
     }
 
     public static final class IntakeConstants
     {
         // Motor controller is Victor SPX:
         public static final int intakeMotorChannel = 26;
+
+        // Want to use positive percentage values for "in".
+        // May need to invert those to get the motor running in the right directions:
+        public static boolean isMotorInverted = false;
+
+        // Default "speed" values:
+        public static double defaultMotorInSpeed = 0.80;
+        public static double defaultMotorOutSpeed = -0.80;
     }
 
 	public static final class ShooterConstants
@@ -101,8 +118,8 @@ public final class Constants
 		public static final boolean isLeftMotorInverted = false;
 		public static final boolean isRightMotorInverted = true;
 
-		public static final double defaultLowVelocity = 1800;
-		public static final double defaultHighVelocity = 2500;
+		public static final double defaultLowVelocity = 600;
+		public static final double defaultHighVelocity = 1350;
 		public static final double defaultPercentage = 0.5;
 
         // This is the max output of the 4:1 gearbox.
@@ -139,8 +156,8 @@ public final class Constants
 		public static final String driveTrainRightPositionKey = "DT Right Pos";
 		public static final String driveTrainOpenLoopRampRateKey = "OL Ramp Rate (secs)";
 		public static final String driveTrainClosedLoopRampRateKey = "CL Ramp Rate (secs)";
-        public static final String driveTrainLeftPercentOutput = "DT Left % Output";
-        public static final String driveTrainRightPercentOutput = "DT Right % Output";
+        public static final String driveTrainLeftPercentOutputKey = "DT Left % Output";
+        public static final String driveTrainRightPercentOutputKey = "DT Right % Output";
 
 		public static final String shooterLowTargetVelocityKey = "Shooter Low RPM";
 		public static final String shooterHighTargetVelocityKey = "Shooter High RPM";
@@ -150,6 +167,13 @@ public final class Constants
         public static final String shooterRampUpTimeKey = "Shooter Ramp Secs";
 
         public static final String shooterTargetPercentageKey = "Shooter %";
-    }
 
+        public static final String intakeInPercentageKey = "Intake In %";
+        public static final String intakeOutPercentageKey = "Intake Out %";
+
+        public static final String indexerLowerInPercentageKey = "Idx Lower In %";
+        public static final String indexerLowerOutPercentageKey = "Idx Lower Out %";
+        public static final String indexerUpperInPercentageKey = "Idx Upper In %";
+        public static final String indexerUpperOutPercentageKey = "Idx Upper Out %";
+    }
 }

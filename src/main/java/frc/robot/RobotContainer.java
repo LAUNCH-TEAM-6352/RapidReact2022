@@ -14,11 +14,18 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.RunIndexerLower;
+import frc.robot.commands.RunIndexerUpper;
+import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.PneumaticPrototype;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,6 +46,8 @@ public class RobotContainer
     private final Optional<DriveTrain> driveTrain;
     private final Optional<PneumaticPrototype> pneumaticPrototype;
     private final Optional<Shooter> shooter;
+    private final Optional<Indexer> indexer;
+    private final Optional<Intake> intake;
 
     // OI devices:
 	private final XboxController gamepad;
@@ -84,7 +93,11 @@ public class RobotContainer
 
         pneumaticPrototype = gameData.contains("-pp-") ? Optional.of(new PneumaticPrototype()) : Optional.empty();
 
-        shooter = gameData.contains("-s-") ? Optional.of(new Shooter()) : Optional.empty();
+        shooter = gameData.isBlank() || gameData.contains("-s-") ? Optional.of(new Shooter()) : Optional.empty();
+
+        indexer = gameData.isBlank() || gameData.contains("-idx-") ? Optional.of(new Indexer()) : Optional.empty();
+
+        intake = gameData.isBlank() || gameData.contains("-int-") ? Optional.of(new Intake()) : Optional.empty();
 
         // Configure default commands:
         driveTrain.ifPresent((dt) ->
@@ -112,6 +125,13 @@ public class RobotContainer
     {
         // Shooter buttons:
         shooter.ifPresent(this::configureButtonBindings);
+
+        // Indexer buttons:
+        indexer.ifPresent(this::configureButtonBindings);
+
+        //Intake buttons:
+        intake.ifPresent(this::configureButtonBindings);
+
     }
 
     /**
@@ -134,16 +154,44 @@ public class RobotContainer
                 shooter));
     }
 
+    /**
+     * Configure the button bindings for the indexer.
+     * 
+     * @param indexer
+     */
+    private void configureButtonBindings(Indexer indexer)
+    {
+        new JoystickButton(gamepad, Button.kLeftBumper.value)
+            .whileHeld(new RunIndexerLower(indexer, DashboardConstants.indexerLowerInPercentageKey));
+        new JoystickButton(gamepad, Button.kRightBumper.value)
+            .whileHeld(new RunIndexerLower(indexer, DashboardConstants.indexerLowerOutPercentageKey));
+        new JoystickButton(gamepad, Button.kY.value)
+            .whileHeld(new RunIndexerUpper(indexer, DashboardConstants.indexerUpperInPercentageKey));
+
+        // TODO: Create binding to run upper indexer out.
+
+        // TODO: Create button binding to run lower and upper indexers simultaneously.
+    }
+
+    private void configureButtonBindings(Intake intake)
+    {
+        new JoystickButton(gamepad, Button.kA.value)
+            .whileHeld(new RunIntake(intake, DashboardConstants.intakeInPercentageKey));
+        new JoystickButton(gamepad, Button.kX.value)
+            .whileHeld(new RunIntake(intake, DashboardConstants.intakeOutPercentageKey));
+    }
+
     private void configureSmartDashboard()
     {
-
-
-
         driveTrain.ifPresent(this::configureSmartDashboard);
 
         pneumaticPrototype.ifPresent(this::configureSmartDashboard);
 
         shooter.ifPresent(this::configureSmartDashboard);
+
+        indexer.ifPresent(this::configureSmartDashboard);
+
+        intake.ifPresent(this::configureSmartDashboard);
     }
 
     /**
@@ -214,7 +262,26 @@ public class RobotContainer
             shooter
             )
         );
-}
+    }
+
+    /**
+     * Adds indexer related stuff to the Smart Dashboard.
+     * 
+     * @parm indexer
+     */
+    private void configureSmartDashboard(Indexer indexer)
+    {
+        SmartDashboard.putNumber(DashboardConstants.indexerLowerInPercentageKey, IndexerConstants.defaultLowerMotorInSpeed);
+        SmartDashboard.putNumber(DashboardConstants.indexerLowerOutPercentageKey, IndexerConstants.defaultLowerMotorOutSpeed);
+        SmartDashboard.putNumber(DashboardConstants.indexerUpperInPercentageKey, IndexerConstants.defaultUpperMotorInSpeed);
+        SmartDashboard.putNumber(DashboardConstants.indexerUpperOutPercentageKey, IndexerConstants.defaultUpperMotorOutSpeed);
+    }
+
+    private void configureSmartDashboard(Intake intake)
+    {
+        SmartDashboard.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultMotorInSpeed);
+        SmartDashboard.putNumber(DashboardConstants.intakeOutPercentageKey, IntakeConstants.defaultMotorOutSpeed);
+    }
 
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
