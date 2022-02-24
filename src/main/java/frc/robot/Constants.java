@@ -23,7 +23,7 @@ public final class Constants
 {
 	public static final class OIConstants
 	{
-		public static final int xboxControllerPort = 1;
+		public static final int gamepadPort = 1;
 		public static final int leftJoystickPort = 2;
 		public static final int rightJoystickPort = 3;
 	}
@@ -52,14 +52,19 @@ public final class Constants
         // If motors shjould coast or brake to a stop:
         public static final IdleMode idleMode = IdleMode.kCoast;
 
-        // Values for PID controller used for driving to a specific position:
-        public static final double pidP = 0.08;
-        public static final double pidI = 0.00001;
-        public static final double pidD = 1.0;
-        public static final double pidIZ = 10.0;
-        public static final double pidFF = 0.0;
-        public static final double pidMaxOutput = +0.5;
-        public static final double pidMinOutput = -0.5;
+        public static final double defaultAutoTargetPosition = -1000;
+
+        // Tolerance for determining if at target position:
+        public static final double positionTolerance = 10;
+
+        // Default values for PID controller used for driving to a specific position:
+        public static final double defaultPidP = 0.08;
+        public static final double defaultPidI = 0.00001;
+        public static final double defaultPidD = 1.0;
+        public static final double defaultPidIZ = 10.0;
+        public static final double defaultPidFF = 0.0;
+        public static final double defaultPidMinOutput = -0.5;
+        public static final double defaultPidMaxOutput = +0.5;
 
         // Default values for Smart Dashboard:
         public static final double defaultPercentage = 0.5;
@@ -69,10 +74,8 @@ public final class Constants
     
 	public static final class PneumaticsConstants
 	{
+        public static final int moduleId = 0;
 		public static final PneumaticsModuleType moduleType = PneumaticsModuleType.CTREPCM;
-
-        public static final int intakeInChannel = 0;
-        public static final int intakeoutChannel = 1;
 
         public static final int tbdAChannel = 2;
         public static final int tbdBChannel = 3;
@@ -108,6 +111,10 @@ public final class Constants
         // Default "speed" values:
         public static double defaultMotorInSpeed = 0.80;
         public static double defaultMotorOutSpeed = -0.80;
+
+        // These deal with the pneumatics:
+        public static final int pneumaticsRetractChannel = 0;
+        public static final int pneumaticsExtendChannel = 1;
     }
 
 	public static final class ShooterConstants
@@ -158,6 +165,17 @@ public final class Constants
 		public static final String driveTrainClosedLoopRampRateKey = "CL Ramp Rate (secs)";
         public static final String driveTrainLeftPercentOutputKey = "DT Left % Output";
         public static final String driveTrainRightPercentOutputKey = "DT Right % Output";
+        public static final String driveTrainAutoTargetPositionKey = "DT Auto Target Pos";
+
+        public static final String driveTrainPidPKey = "DT PID P";
+        public static final String driveTrainPidIKey = "DT PID I";
+        public static final String driveTrainPidDKey = "DT PID D";
+        public static final String driveTrainPidIZKey = "DT PID IZ";
+        public static final String driveTrainPidFFKey = "DT PID FF";
+        public static final String driveTrainPidMaxOutputKey = "DT PID Max";
+        public static final String driveTrainPidMinOutputKey = "DT PID Min";
+        public static final String driveTrainPidTarget = "DT PID Target";
+        public static final String driveTrainPidCurrent = "DT PID Current";
 
 		public static final String shooterLowTargetVelocityKey = "Shooter Low RPM";
 		public static final String shooterHighTargetVelocityKey = "Shooter High RPM";
@@ -165,8 +183,8 @@ public final class Constants
 		public static final String shooterCurrentVelocityLeftKey = "Shooter RPM Left";
 		public static final String shooterCurrentVelocityRightKey = "Shooter RPM Rght";
         public static final String shooterRampUpTimeKey = "Shooter Ramp Secs";
-
         public static final String shooterTargetPercentageKey = "Shooter %";
+        public static final String shooterAtSpeedKey = "Shooter at Speed";
 
         public static final String intakeInPercentageKey = "Intake In %";
         public static final String intakeOutPercentageKey = "Intake Out %";
