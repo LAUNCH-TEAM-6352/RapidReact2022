@@ -18,8 +18,8 @@ import frc.robot.Constants.IndexerConstants;
  */
 public class Indexer extends SubsystemBase
 {
-	private VictorSPX lowerMotor = new VictorSPX(IndexerConstants.lowerMotorChannel);
-	private VictorSPX upperMotor = new VictorSPX(IndexerConstants.upperMotorChannel);
+	private final VictorSPX lowerMotor = new VictorSPX(IndexerConstants.lowerMotorChannel);
+	private final VictorSPX upperMotor = new VictorSPX(IndexerConstants.upperMotorChannel);
 
 	public Indexer()
 	{

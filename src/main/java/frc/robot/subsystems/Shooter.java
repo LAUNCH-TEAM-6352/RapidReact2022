@@ -19,8 +19,8 @@ import frc.robot.Constants.ShooterConstants;
 
 public class Shooter extends SubsystemBase
 {
-	private TalonSRX leftMotor = new TalonSRX(ShooterConstants.leftMotorChannel);
-	private TalonSRX rightMotor = new TalonSRX(ShooterConstants.rightMotorChannel);
+	private final TalonSRX leftMotor = new TalonSRX(ShooterConstants.leftMotorChannel);
+	private final TalonSRX rightMotor = new TalonSRX(ShooterConstants.rightMotorChannel);
 
     // Indicates if the shooter is running:
     private boolean isRunning = false;
@@ -120,6 +120,8 @@ public class Shooter extends SubsystemBase
 	{
 		setPercentage(0);
         isRunning = false;
+        SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
+
 	}
 
 	@Override
@@ -140,6 +142,7 @@ public class Shooter extends SubsystemBase
             {
                 isTimingStarted = false;
                 long stopTime = RobotController.getFPGATime();
+                SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
                 // The FPGA time is in microseconds, so divide by 1000000.0 to get seconds:
                 SmartDashboard.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
             }
