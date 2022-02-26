@@ -23,7 +23,7 @@ public class RunIndexerUpper extends CommandBase
 	private RunIndexerUpper(Indexer indexer)
 	{
 		this.indexer = indexer;
-		addRequirements(indexer);
+		//addRequirements(indexer);
 	}
 
 	public RunIndexerUpper(Indexer indexer, String key)
