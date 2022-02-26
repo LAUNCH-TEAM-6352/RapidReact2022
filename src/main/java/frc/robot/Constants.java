@@ -125,7 +125,7 @@ public final class Constants
 		public static final boolean isLeftMotorInverted = false;
 		public static final boolean isRightMotorInverted = true;
 
-		public static final double defaultLowVelocity = 600;
+		public static final double defaultLowVelocity = 700;
 		public static final double defaultHighVelocity = 1350;
 		public static final double defaultPercentage = 0.5;
 
