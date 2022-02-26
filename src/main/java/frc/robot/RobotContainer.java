@@ -6,6 +6,8 @@ package frc.robot;
 
 import java.util.Optional;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -96,7 +98,11 @@ public class RobotContainer
         SmartDashboard.putBoolean("Gamepad Detected", gamepad != null);
         SmartDashboard.putBoolean("Left Joystick Detected", leftStick != null);
         SmartDashboard.putBoolean("Right Joystick Detected", rightStick != null);
-        
+
+        // Start capturing video from the USB camera:
+        UsbCamera camera = CameraServer.startAutomaticCapture();
+        camera.setResolution(640, 480);
+
 
         // Create pneumatics compressor:
         compressor = gameData.isBlank() || gameData.contains("-p-") ? Optional.of(new Compressor(PneumaticsConstants.moduleId, PneumaticsConstants.moduleType)) : Optional.empty();
