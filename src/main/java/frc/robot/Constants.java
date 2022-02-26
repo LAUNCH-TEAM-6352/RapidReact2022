@@ -109,7 +109,7 @@ public final class Constants
         public static boolean isMotorInverted = false;
 
         // Default "speed" values:
-        public static double defaultMotorInSpeed = 0.80;
+        public static double defaultMotorInSpeed = 0.90;
         public static double defaultMotorOutSpeed = -0.80;
 
         // These deal with the pneumatics:
