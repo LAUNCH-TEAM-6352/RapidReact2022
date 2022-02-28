@@ -23,6 +23,7 @@ public class RunIndexerUpper extends CommandBase
 	private RunIndexerUpper(Indexer indexer)
 	{
 		this.indexer = indexer;
+        // The following commented out to allow running lower and upper indexer simultaneously.
 		//addRequirements(indexer);
 	}
 
