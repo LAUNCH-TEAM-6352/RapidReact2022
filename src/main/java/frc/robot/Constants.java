@@ -109,7 +109,7 @@ public final class Constants
         public static boolean isMotorInverted = false;
 
         // Default "speed" values:
-        public static double defaultMotorInSpeed = 0.80;
+        public static double defaultMotorInSpeed = 1.00;
         public static double defaultMotorOutSpeed = -0.80;
 
         // These deal with the pneumatics:
@@ -125,7 +125,7 @@ public final class Constants
 		public static final boolean isLeftMotorInverted = false;
 		public static final boolean isRightMotorInverted = true;
 
-		public static final double defaultLowVelocity = 600;
+		public static final double defaultLowVelocity = 700;
 		public static final double defaultHighVelocity = 1350;
 		public static final double defaultPercentage = 0.5;
 

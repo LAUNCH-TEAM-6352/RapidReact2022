@@ -120,7 +120,7 @@ public class Shooter extends SubsystemBase
 	{
 		setPercentage(0);
         isRunning = false;
-        SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
+        SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
 
 	}
 
