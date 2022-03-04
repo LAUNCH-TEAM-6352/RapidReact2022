@@ -13,6 +13,9 @@ import frc.robot.subsystems.Indexer;
 
 /**
  * A command for running the lower indexer.
+ * <p>
+ * This command does not require the {@link Indexer} subsystem to allow
+ * it to run simultaneoulsy with the {@link RunIndexerUpper} command.
  */
 public class RunIndexerLower extends CommandBase
 {
@@ -23,8 +26,6 @@ public class RunIndexerLower extends CommandBase
 	private RunIndexerLower(Indexer indexer)
 	{
 		this.indexer = indexer;
-        // The following commented out to allow running lower and upper indexer simultaneously.
-		//addRequirements(indexer);
 	}
 
 	public RunIndexerLower(Indexer indexer, String key)
