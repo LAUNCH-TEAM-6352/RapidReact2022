@@ -22,7 +22,7 @@ import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PneumaticsConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.DriveToPosition;
+import frc.robot.commands.DriveToRelativePosition;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoysticks;
 import frc.robot.commands.RunIndexerLower;
@@ -271,7 +271,7 @@ public class RobotContainer
         );
 
         // The following deal with driving to a specified position:
-        var cmd = new DriveToPosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10);
+        var cmd = new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10);
         SmartDashboard.putData("Drive to Position", cmd);
         SmartDashboard.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
 

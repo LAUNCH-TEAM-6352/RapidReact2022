@@ -55,10 +55,10 @@ public final class Constants
 		public static final int rightRearMotorChannel = 10;
 		public static final int rightTopMotorChannel = 12;
 
-        // public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
-        // public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
-        public static final int[] leftMotorChannels = {leftRearMotorChannel};
-        public static final int[] rightMotorChannels = {rightRearMotorChannel};
+        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+        // public static final int[] leftMotorChannels = {leftRearMotorChannel};
+        // public static final int[] rightMotorChannels = {rightRearMotorChannel};
 
         public static final MotorName[] motorNames =
         {
