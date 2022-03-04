@@ -8,30 +8,30 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
-public class DriveToPosition extends CommandBase
+/**
+ * A command to drive to a position relative to the current position.
+ */
+public class DriveToRelativePosition extends CommandBase
 {
     private final DriveTrain driveTrain;
 	private String key = null;
 	private double position;
 
-    private DriveToPosition(DriveTrain driveTrain)
+    private DriveToRelativePosition(DriveTrain driveTrain)
     {
         this.driveTrain = driveTrain;
 
         // Use addRequirements() here to declare subsystem dependencies.
         addRequirements(driveTrain);
-
-        // Forces command to stop after 5 seconds:
-        withTimeout(5);
     }
 
-	public DriveToPosition(DriveTrain driveTrain, String key)
+	public DriveToRelativePosition(DriveTrain driveTrain, String key)
 	{
 		this(driveTrain);
 		this.key = key;
 	}
 
-	public DriveToPosition(DriveTrain driveTrain, double position)
+	public DriveToRelativePosition(DriveTrain driveTrain, double position)
 	{
 		this(driveTrain);
 		this.position = position;
@@ -54,6 +54,7 @@ public class DriveToPosition extends CommandBase
     @Override
     public void execute()
     {
+        // Intentionally left blank as all the work is done in initialize().
     }
 
     // Called once the command ends or is interrupted.

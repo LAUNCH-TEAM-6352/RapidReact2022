@@ -33,7 +33,6 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -271,11 +270,21 @@ public class RobotContainer
             )
         );
 
-        DriveToPosition cmd = new DriveToPosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey);
-        CommandGroupBase.clearGroupedCommand(cmd);
+        // The following deal with driving to a specified position:
+        var cmd = new DriveToPosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10);
         SmartDashboard.putData("Drive to Position", cmd);
-
         SmartDashboard.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+
+        // The following are to be used to quickly test the individual drive train motors:
+        for (int i = 0; i < DriveTrainConstants.motorNames.length; i++)
+        {
+            var motorName = DriveTrainConstants.motorNames[i];
+            SmartDashboard.putData("Test " + motorName.abbreviation + " (" + motorName.channel + ")",
+                new StartEndCommand(
+                    () -> driveTrain.set(motorName.channel, 0.25),
+                    () -> driveTrain.stop(motorName.channel),
+                    driveTrain));
+        };
     }
 
     /**

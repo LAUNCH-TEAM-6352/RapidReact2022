@@ -5,10 +5,11 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -26,8 +27,16 @@ public class DriveTrain extends SubsystemBase
     // Lists of motors on left and right side of drive train:
     private final List<CANSparkMax> leftMotors = new ArrayList<CANSparkMax>();
     private final List<CANSparkMax> rightMotors = new ArrayList<CANSparkMax>();
+
+    // A map of motors:
+    private final Map<Integer, CANSparkMax> motors = new HashMap<Integer, CANSparkMax>();
+
+    // The following used diring PID control:
     private CANSparkMax pidLeader = null;
     private double targetPosition;
+
+    // The current open loop ramp rate:
+    private double openLoopRampRate = DriveTrainConstants.defaultOpenLoopRampRate;
 
     /**
      * Creates a new DriveTrain.
@@ -41,6 +50,7 @@ public class DriveTrain extends SubsystemBase
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.isLeftMotorInverted);
             leftMotors.add(motor);
+            motors.put(Integer.valueOf(channel), motor);
         }
 
         // Construct the motors on the right side of the drive train:
@@ -50,6 +60,7 @@ public class DriveTrain extends SubsystemBase
             setCommonConfig(motor);
             motor.setInverted(DriveTrainConstants.areRightMotorsInverted);
             rightMotors.add(motor);
+            motors.put(Integer.valueOf(channel), motor);
         }
     }
 
@@ -77,9 +88,13 @@ public class DriveTrain extends SubsystemBase
         {
             motor.follow(pidLeader, DriveTrainConstants.isLeftMotorInverted != DriveTrainConstants.areRightMotorsInverted);
         });
+
+        // Set closed loop ramp rate on the leader:
+        pidLeader.setClosedLoopRampRate(
+            SmartDashboard.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate));
         
         // Set PID controller parameters on the leader:
-        SparkMaxPIDController pidController = pidLeader.getPIDController();
+        var pidController = pidLeader.getPIDController();
         pidController.setP(SmartDashboard.getNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP));
         pidController.setI(SmartDashboard.getNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI));
         pidController.setD(SmartDashboard.getNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD));
@@ -97,6 +112,7 @@ public class DriveTrain extends SubsystemBase
     {
         leftMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
         rightMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
+        setOpenLoopRampRate(openLoopRampRate);
     }
 
     /**
@@ -193,6 +209,35 @@ public class DriveTrain extends SubsystemBase
 	}
 
     /**
+     * Runs the motor at the specified channel at the specified percentage.
+     * 
+     * @param channel
+     * @param percentage
+     */
+    public void set(int channel, double percentage)
+    {
+        var motor = motors.get(Integer.valueOf(channel));
+        if (motor != null)
+        {
+            motor.set(percentage);
+        }
+    }
+
+    /**
+     * Stops the motor at the speficied channel.
+     * 
+     * @param channel
+     */
+    public void stop(int channel)
+    {
+        var motor = motors.get(Integer.valueOf(channel));
+        if (motor != null)
+        {
+            motor.stopMotor();
+        }
+    }
+
+    /**
      * Resets encoder position on all motors.
      */
     public void resetPosition()
@@ -207,11 +252,22 @@ public class DriveTrain extends SubsystemBase
         if (!leftMotors.isEmpty())
         {
             SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPositionKey, leftMotors.get(0).getEncoder().getPosition());
+            SmartDashboard.putNumber("DT Left Applied", leftMotors.get(0).getAppliedOutput());
         }
 
         if (!rightMotors.isEmpty())
         {
             SmartDashboard.putNumber(DashboardConstants.driveTrainRightPositionKey, rightMotors.get(0).getEncoder().getPosition());
+            SmartDashboard.putNumber("DT Right Applied", rightMotors.get(0).getAppliedOutput());
+        }
+
+        // See if the open loop ramp rate has been changed on the Smart Dashboard:
+        double dashboardRampRate = SmartDashboard.getNumber(
+            DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
+        if (dashboardRampRate != openLoopRampRate)
+        {
+            openLoopRampRate = dashboardRampRate;
+            setOpenLoopRampRate(openLoopRampRate);
         }
     }
 
@@ -225,8 +281,15 @@ public class DriveTrain extends SubsystemBase
         motor.restoreFactoryDefaults();
         motor.clearFaults();
         motor.setIdleMode(DriveTrainConstants.idleMode);
-        motor.setOpenLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, 0.0));
-        motor.setClosedLoopRampRate(SmartDashboard.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, 0.0));
+    }
+
+    /**
+     * Sets the open loop ramp rate on all motors.
+     */
+    private void setOpenLoopRampRate(double rampRate)
+    {
+        leftMotors.forEach((motor) -> motor.setOpenLoopRampRate(rampRate));
+        rightMotors.forEach((motor) -> motor.setOpenLoopRampRate(rampRate));
     }
 
     /**
