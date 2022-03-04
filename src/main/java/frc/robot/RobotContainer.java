@@ -198,10 +198,19 @@ public class RobotContainer
             return;
         }
 
-        new JoystickButton(gamepad, Button.kLeftBumper.value)
-            .whileHeld(new RunIndexerLower(indexer, DashboardConstants.indexerLowerInPercentageKey));
-        new JoystickButton(gamepad, Button.kRightBumper.value)
-            .whileHeld(new RunIndexerLower(indexer, DashboardConstants.indexerLowerOutPercentageKey));
+        var leftBumper = new JoystickButton(gamepad, Button.kLeftBumper.value);
+        var rightBumper = new JoystickButton(gamepad, Button.kRightBumper.value);
+
+        // The use of the withInterrput() decorator in the next two
+        // bindings prevents the lower indexer from being run in
+        // opposite directions at the same time.
+        leftBumper.whileHeld(
+            new RunIndexerLower(indexer, DashboardConstants.indexerLowerInPercentageKey)
+            .withInterrupt(rightBumper::get));
+        rightBumper.whileHeld(
+            new RunIndexerLower(indexer, DashboardConstants.indexerLowerOutPercentageKey)
+            .withInterrupt(leftBumper::get));
+
         new JoystickButton(gamepad, Button.kY.value)
             .whileHeld(new RunIndexerUpper(indexer, DashboardConstants.indexerUpperInPercentageKey));
 
