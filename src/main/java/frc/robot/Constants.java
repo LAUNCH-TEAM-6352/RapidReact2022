@@ -30,6 +30,23 @@ public final class Constants
     
 	public static final class DriveTrainConstants
 	{
+        /**
+         * Used to give names to motors.
+         */
+        public static class MotorName
+        {
+            public final int channel;
+            public final String name;
+            public final String abbreviation;
+
+            public MotorName (int channel, String name, String abbreviation)
+            {
+                this.channel = channel;
+                this.name = name;
+                this.abbreviation = abbreviation;
+            }
+        }
+
         // Motor controllers are SPARK MAX:
 		public static final int leftFrontMotorChannel = 14;
 		public static final int leftRearMotorChannel = 13;
@@ -38,8 +55,20 @@ public final class Constants
 		public static final int rightRearMotorChannel = 10;
 		public static final int rightTopMotorChannel = 12;
 
-        public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
-        public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+        // public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
+        // public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
+        public static final int[] leftMotorChannels = {leftRearMotorChannel};
+        public static final int[] rightMotorChannels = {rightRearMotorChannel};
+
+        public static final MotorName[] motorNames =
+        {
+            new MotorName(leftFrontMotorChannel, "Left Front", "LF"),
+            new MotorName(leftTopMotorChannel, "Left Top", "LT"),
+            new MotorName(leftRearMotorChannel, "Left Rear", "LR"),
+            new MotorName(rightFrontMotorChannel, "Right Front", "RF"),
+            new MotorName(rightTopMotorChannel, "Right Top", "RT"),
+            new MotorName(rightRearMotorChannel, "Right Rear", "RR")
+        };
 
         // Indicates if motor controller should output negative of commanded percentage:
 		public static final boolean isLeftMotorInverted = true;
@@ -68,8 +97,8 @@ public final class Constants
 
         // Default values for Smart Dashboard:
         public static final double defaultPercentage = 0.5;
-        public static final double defaultOpenLoopRampRate = 0.0;
-        public static final double defaultClosedLoopRampRate = 0.0;
+        public static final double defaultOpenLoopRampRate = 1.0;
+        public static final double defaultClosedLoopRampRate = 2.0;
 	}
     
 	public static final class PneumaticsConstants
