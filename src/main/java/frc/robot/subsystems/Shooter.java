@@ -24,6 +24,7 @@ public class Shooter extends SubsystemBase
 
     // Indicates if the shooter is running:
     private boolean isRunning = false;
+    private boolean isAtTargetVelocity = false;
 
     // Values to determine how long it takes the shooter motor to ramp up to the target velocity:
     // The FPGA microsecond timer:
@@ -87,7 +88,7 @@ public class Shooter extends SubsystemBase
         }
     }
 
-	/***
+	/**
 	 * Sets the shooter motor speeds in velocity (RPM).
 	 */
 	public void setVelocity(double velocity)
@@ -103,7 +104,16 @@ public class Shooter extends SubsystemBase
 		leftMotor.set(ControlMode.Velocity, unitsPer100Ms);
         isTimingStarted = true;
         isRunning = true;
+        isAtTargetVelocity = false;
 	}
+
+    /**
+     * Returns <code>true</code> if the shooter is at the set target velocity.
+     */
+    public boolean isAtTargetVelocity()
+    {
+        return isAtTargetVelocity;
+    }
 
 	/***
 	 * Sets the shooter motor speeds in percentage.
@@ -120,6 +130,7 @@ public class Shooter extends SubsystemBase
 	{
 		setPercentage(0);
         isRunning = false;
+        isAtTargetVelocity = false;
         SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
 
 	}
@@ -142,6 +153,7 @@ public class Shooter extends SubsystemBase
             {
                 isTimingStarted = false;
                 long stopTime = RobotController.getFPGATime();
+                isAtTargetVelocity = true;
                 SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
                 // The FPGA time is in microseconds, so divide by 1000000.0 to get seconds:
                 SmartDashboard.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
