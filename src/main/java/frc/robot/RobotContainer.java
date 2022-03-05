@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.DriveTrainConstants;
 import frc.robot.Constants.IndexerConstants;
@@ -25,9 +26,11 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.commands.DriveToRelativePosition;
 import frc.robot.commands.DriveWithGamepad;
 import frc.robot.commands.DriveWithJoysticks;
+import frc.robot.commands.MoveClimberHooks;
 import frc.robot.commands.RunIndexerLower;
 import frc.robot.commands.RunIndexerUpper;
 import frc.robot.commands.RunIntake;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -54,6 +57,7 @@ public class RobotContainer
     private final Optional<Shooter> shooter;
     private final Optional<Indexer> indexer;
     private final Optional<Intake> intake;
+    private final Optional<Climber> climber;
 
     // OI devices:
 	private final XboxController gamepad;
@@ -80,6 +84,7 @@ public class RobotContainer
         //   -s-    Shooter
         //   -int-  Intake
         //   -idx-  Indexer
+        //   -c-    Climber
         // 
         gameData = DriverStation.getGameSpecificMessage().toLowerCase();
 
@@ -114,6 +119,8 @@ public class RobotContainer
         indexer = gameData.isBlank() || gameData.contains("-idx-") ? Optional.of(new Indexer()) : Optional.empty();
 
         intake = gameData.isBlank() || gameData.contains("-int-") ? Optional.of(new Intake(compressor.isPresent())) : Optional.empty();
+
+        climber = gameData.isBlank() || gameData.contains("-c-") ? Optional.of(new Climber(gamepad, compressor.isPresent())) : Optional.empty();
 
         // Configure default commands:
         configureDefaultCommands();
@@ -157,8 +164,11 @@ public class RobotContainer
         // Indexer buttons:
         indexer.ifPresent(this::configureButtonBindings);
 
-        //Intake buttons:
+        // Intake buttons:
         intake.ifPresent(this::configureButtonBindings);
+
+        // Climber buttons:
+        climber.ifPresent(this::configureButtonBindings);
     }
 
     /**
@@ -215,8 +225,6 @@ public class RobotContainer
             .whileHeld(new RunIndexerUpper(indexer, DashboardConstants.indexerUpperInPercentageKey));
 
         // TODO: Create binding to run upper indexer out?
-
-        // TODO: Create button binding to run lower and upper indexers simultaneously?
     }
 
     private void configureButtonBindings(Intake intake)
@@ -235,8 +243,32 @@ public class RobotContainer
             .whenPressed(new InstantCommand(() -> intake.extend(), intake));
         new JoystickButton(gamepad, Button.kRightStick.value)
             .whenPressed(new InstantCommand(() -> intake.retract(), intake));
+    }
 
-        // TODO: Configure button bindings for extending and retracting the intake mechanism.
+    private void configureButtonBindings(Climber climber)
+    {
+        if (leftStick == null || rightStick == null)
+        {
+            return;
+        }
+
+        var extendHooks = new JoystickButton(rightStick, 3);
+        var retractHooks = new JoystickButton(rightStick, 4);
+
+        // The use of the withInterrput() decorator in the next two
+        // bindings prevents the climber hooks from being run in
+        // opposite directions at the same time.
+        extendHooks.whileHeld(
+            new MoveClimberHooks(climber, DashboardConstants.climberHooksExtendSpeedKey)
+            .withInterrupt(retractHooks::get));
+        retractHooks.whileHeld(
+            new MoveClimberHooks(climber, DashboardConstants.climberHooksRetractSpeedKey)
+            .withInterrupt(extendHooks::get));
+
+        new JoystickButton(leftStick, 3)
+            .whenPressed(new InstantCommand(() -> climber.moveClimberUp(), climber));
+        new JoystickButton(leftStick, 4)
+            .whenPressed(new InstantCommand(() -> climber.moveClimberDown(), climber));
     }
 
     private void configureSmartDashboard()
@@ -248,6 +280,8 @@ public class RobotContainer
         indexer.ifPresent(this::configureSmartDashboard);
 
         intake.ifPresent(this::configureSmartDashboard);
+
+        climber.ifPresent(this::configureSmartDashboard);
     }
 
     /**
@@ -353,6 +387,18 @@ public class RobotContainer
 
         SmartDashboard.putData("Extend Intake", new InstantCommand(() -> intake.extend(), intake));
         SmartDashboard.putData("Retract Intake", new InstantCommand(() -> intake.retract(), intake));
+    }
+
+    private void configureSmartDashboard(Climber climber)
+    {
+        SmartDashboard.putNumber(DashboardConstants.climberHooksExtendSpeedKey, ClimberConstants.defaultHookExtendSpeed);
+        SmartDashboard.putNumber(DashboardConstants.climberHooksRetractSpeedKey, ClimberConstants.defaultHookRetractSpeed);
+
+        SmartDashboard.putData("Climber Up", new InstantCommand(() -> climber.moveClimberUp(), climber));
+        SmartDashboard.putData("Climber Down", new InstantCommand(() -> climber.moveClimberDown(), climber));
+
+        SmartDashboard.putData("Extend Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksExtendSpeedKey));
+        SmartDashboard.putData("Retract Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksRetractSpeedKey));
     }
 
     /**
