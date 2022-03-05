@@ -105,9 +105,25 @@ public final class Constants
 	{
         public static final int moduleId = 0;
 		public static final PneumaticsModuleType moduleType = PneumaticsModuleType.CTREPCM;
+	}
+    
+	public static final class ClimberConstants
+	{
+        // Motor controllers are Victor SPX:
+        public static final int leftMotorChannel = 27;
+        public static final int rightMotorChannel = 28;
+        public static final boolean isLeftMotorInverted = false;
+        public static final boolean isRightMotorInverted = true;
+        public static final double defaultHookExtendSpeed = 0.10;
+        public static final double defaultHookRetractSpeed = -0.10;
 
-        public static final int tbdAChannel = 2;
-        public static final int tbdBChannel = 3;
+        // Theseare the pneumartics chnnels for moving the climber mechanism uip and down:
+        public static final int pneumaticsUpChannel = 2;
+        public static final int pneumaticsDownChannel = 3;
+
+        // These aere the digital I/O channels for limit switches:
+		public static final int extendLimitChannel = 0; 
+		public static final int retractLimitChannel = 1; 
 	}
     
     public static final class IndexerConstants
@@ -222,5 +238,9 @@ public final class Constants
         public static final String indexerLowerOutPercentageKey = "Idx Lower Out %";
         public static final String indexerUpperInPercentageKey = "Idx Upper In %";
         public static final String indexerUpperOutPercentageKey = "Idx Upper Out %";
+
+        public static final String climberHooksExtendSpeedKey = "Climber Hooks Extend %";
+        public static final String climberHooksRetractSpeedKey = "Climber Hooks Retract %";
+        public static final String climberHooksAtLimit = "Climber Hooks Limit";
     }
 }

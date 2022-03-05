@@ -113,7 +113,7 @@ public class Shooter extends SubsystemBase
 		leftMotor.set(ControlMode.PercentOutput, percentage);
 	}
 
-	/***
+	/**
 	 * Stops the shooter motors.
 	 */
 	public void stop()
