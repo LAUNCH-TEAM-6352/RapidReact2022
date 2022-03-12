@@ -66,7 +66,7 @@ public class Climber extends SubsystemBase
     public void setHooks(double speed)
     {
         // If trying to move past a limit, stop the motors and rumble the gamepad:
-        if (speed > 0 && isAtHookExtendLimit() || speed < 0 && isAtHookRetractLimit())
+        if ((speed > 0 && isAtHookExtendLimit()) || (speed < 0 && isAtHookRetractLimit()))
         {
 			speed = 0;
 			setGamepadRumble(1);

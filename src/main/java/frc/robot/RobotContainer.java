@@ -37,7 +37,9 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -408,7 +410,28 @@ public class RobotContainer
      */
     public Command getAutonomousCommand()
     {
-        // An ExampleCommand will run in autonomous
-        return null;
+        // To prevent crashing, make sure we have all the necessary subsystems:
+        if (driveTrain.isEmpty() || shooter.isEmpty() || indexer.isEmpty())
+        {
+            return null;
+        }
+
+        // TODO: Test and tune this code! Will maybe have to drive out a little further after shooting to leave the tarmac.
+
+        // Create an inline sequential command that:
+        //   1) Drives to the configured position;
+        //   2) Starts the shooter motor at high speed;
+        //   3) Waits for the shooter motor to get uip to speed;
+        //   4) Runs the upper indexer to shoot the cargo; and
+        //   5) Stops the shooter motor.
+        return new SequentialCommandGroup(
+            new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
+            new InstantCommand(() ->
+                shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
+                shooter.get()),
+            new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
+            new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
+            new InstantCommand(() -> shooter.get().stop(), shooter.get())
+        );
     }
 }
