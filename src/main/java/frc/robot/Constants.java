@@ -114,12 +114,13 @@ public final class Constants
         public static final int rightMotorChannel = 28;
         public static final boolean isLeftMotorInverted = false;
         public static final boolean isRightMotorInverted = true;
-        public static final double defaultHookExtendSpeed = 0.10;
-        public static final double defaultHookRetractSpeed = -0.10;
+        public static final double defaultHookExtendSpeed = 0.30;
+        public static final double defaultHookRetractSpeed = -1.00;
+        public static final NeutralMode motorNeutralMode = NeutralMode.Brake;
 
         // Theseare the pneumartics chnnels for moving the climber mechanism uip and down:
-        public static final int pneumaticsUpChannel = 2;
-        public static final int pneumaticsDownChannel = 3;
+        public static final int pneumaticsUpChannel = 0;
+        public static final int pneumaticsDownChannel = 1;
 
         // These aere the digital I/O channels for limit switches:
 		public static final int extendLimitChannel = 0; 
@@ -158,8 +159,8 @@ public final class Constants
         public static double defaultMotorOutSpeed = -0.80;
 
         // These deal with the pneumatics:
-        public static final int pneumaticsRetractChannel = 0;
-        public static final int pneumaticsExtendChannel = 1;
+        public static final int pneumaticsRetractChannel = 2;
+        public static final int pneumaticsExtendChannel = 3;
     }
 
 	public static final class ShooterConstants
