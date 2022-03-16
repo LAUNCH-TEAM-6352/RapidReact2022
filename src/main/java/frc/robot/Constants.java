@@ -57,8 +57,6 @@ public final class Constants
 
         public static final int[] leftMotorChannels = {leftFrontMotorChannel, leftRearMotorChannel, leftTopMotorChannel};
         public static final int[] rightMotorChannels = {rightFrontMotorChannel, rightRearMotorChannel, rightTopMotorChannel};
-        // public static final int[] leftMotorChannels = {leftRearMotorChannel};
-        // public static final int[] rightMotorChannels = {rightRearMotorChannel};
 
         public static final MotorName[] motorNames =
         {
@@ -78,7 +76,7 @@ public final class Constants
         public static final boolean isLeftEncoderInverted = false;
         public static final boolean isRightEncoderInverted = false;
 
-        // If motors shjould coast or brake to a stop:
+        // If motors should coast or brake to a stop:
         public static final IdleMode idleMode = IdleMode.kCoast;
 
         public static final double defaultAutoTargetPosition = -1000;
@@ -112,17 +110,17 @@ public final class Constants
         // Motor controllers are Victor SPX:
         public static final int leftMotorChannel = 27;
         public static final int rightMotorChannel = 28;
-        public static final boolean isLeftMotorInverted = false;
-        public static final boolean isRightMotorInverted = true;
-        public static final double defaultHookExtendSpeed = 0.30;
-        public static final double defaultHookRetractSpeed = -1.00;
+        public static final boolean isLeftMotorInverted = true;
+        public static final boolean isRightMotorInverted = false;
+        public static final double defaultHookExtendSpeed = 0.50;
+        public static final double defaultHookRetractSpeed = -0.50;
         public static final NeutralMode motorNeutralMode = NeutralMode.Brake;
 
-        // Theseare the pneumartics chnnels for moving the climber mechanism uip and down:
-        public static final int pneumaticsUpChannel = 0;
-        public static final int pneumaticsDownChannel = 1;
+        // These are the pneumatics chnnels for moving the climber mechanism up and down:
+        public static final int pneumaticsUpChannel = 2;
+        public static final int pneumaticsDownChannel = 3;
 
-        // These aere the digital I/O channels for limit switches:
+        // These are the digital I/O channels for limit switches:
 		public static final int extendLimitChannel = 0; 
 		public static final int retractLimitChannel = 1; 
 	}
@@ -159,8 +157,8 @@ public final class Constants
         public static double defaultMotorOutSpeed = -0.80;
 
         // These deal with the pneumatics:
-        public static final int pneumaticsRetractChannel = 2;
-        public static final int pneumaticsExtendChannel = 3;
+        public static final int pneumaticsRetractChannel = 0;
+        public static final int pneumaticsExtendChannel = 1;
     }
 
 	public static final class ShooterConstants

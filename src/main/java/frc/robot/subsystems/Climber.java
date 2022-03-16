@@ -107,7 +107,7 @@ public class Climber extends SubsystemBase
      */
     public void moveClimberUp()
     {
-        solenoid.set(Value.kReverse);
+        solenoid.set(Value.kForward);
     }
 
     /**
@@ -115,7 +115,7 @@ public class Climber extends SubsystemBase
      */
     public void moveClimberDown()
     {
-        solenoid.set(Value.kForward);
+        solenoid.set(Value.kReverse);
     }
 
     @Override
