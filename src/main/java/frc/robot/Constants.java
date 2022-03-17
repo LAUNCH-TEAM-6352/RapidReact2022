@@ -80,6 +80,7 @@ public final class Constants
         public static final IdleMode idleMode = IdleMode.kCoast;
 
         public static final double defaultAutoTargetPosition = -1000;
+        public static final double defaultAutoLeaveTarmacPosition = -2000;
 
         // Tolerance for determining if at target position:
         public static final double positionTolerance = 10;
@@ -210,7 +211,8 @@ public final class Constants
         public static final String driveTrainLeftPercentOutputKey = "DT Left % Output";
         public static final String driveTrainRightPercentOutputKey = "DT Right % Output";
         public static final String driveTrainAutoTargetPositionKey = "DT Auto Target Pos";
-
+        public static final String driveTrainAutoLeaveTarmacPositionKey = "DT Auto Leave Tarmac Pos";
+        
         public static final String driveTrainPidPKey = "DT PID P";
         public static final String driveTrainPidIKey = "DT PID I";
         public static final String driveTrainPidDKey = "DT PID D";

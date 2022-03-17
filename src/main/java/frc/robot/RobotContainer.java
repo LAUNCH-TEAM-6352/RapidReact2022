@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DashboardConstants;
@@ -68,6 +69,9 @@ public class RobotContainer
 
     // This is from the driver station:
     private final String gameData;
+
+    // Used for choosing the autonomous program:
+    Optional<SendableChooser<Command>> autonomousChooser = Optional.of(new SendableChooser<>());
 
     /**
      * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -284,6 +288,9 @@ public class RobotContainer
         intake.ifPresent(this::configureSmartDashboard);
 
         climber.ifPresent(this::configureSmartDashboard);
+
+        autonomousChooser.ifPresent(this::configureSmartDashboard);
+
     }
 
     /**
@@ -306,7 +313,8 @@ public class RobotContainer
         SmartDashboard.putNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput);
 
         SmartDashboard.putNumber(DashboardConstants.driveTrainAutoTargetPositionKey, DriveTrainConstants.defaultAutoTargetPosition);
-
+        SmartDashboard.putNumber(DashboardConstants.driveTrainAutoLeaveTarmacPositionKey, DriveTrainConstants.defaultAutoLeaveTarmacPosition);
+        
         SmartDashboard.putData("Run Drive Train", new StartEndCommand(
             () -> driveTrain.setRawMotorOutputs(
                 SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
@@ -316,8 +324,10 @@ public class RobotContainer
         );
 
         // The following deal with driving to a specified position:
-        var cmd = new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10);
-        SmartDashboard.putData("Drive to Position", cmd);
+        SmartDashboard.putData("Drive to Target Pos",
+            new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10));
+        SmartDashboard.putData("Drive to Leave Tarmac Pos",
+            new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
         SmartDashboard.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
 
         // The following are to be used to quickly test the individual drive train motors:
@@ -403,6 +413,33 @@ public class RobotContainer
         SmartDashboard.putData("Retract Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksRetractSpeedKey));
     }
 
+    private void configureSmartDashboard(SendableChooser<Command> chooser)
+    {
+        // Configure the sendable chooser for the autonomous program:
+        chooser.setDefaultOption("Auto Stub", new InstantCommand(() -> {}));
+
+        chooser.addOption("Auto Leave Tarmac",
+            new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
+
+        // Create an inline sequential command that:
+        //   1) Drives to the configured position;
+        //   2) Starts the shooter motor at high speed;
+        //   3) Waits for the shooter motor to get uip to speed;
+        //   4) Runs the upper indexer to shoot the cargo; and
+        //   5) Stops the shooter motor.
+        chooser.addOption("Auto One Cargo",
+            new SequentialCommandGroup(
+                new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
+                new InstantCommand(() ->
+                    shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
+                    shooter.get()),
+                new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
+                new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
+                new InstantCommand(() -> shooter.get().stop(), shooter.get()));
+
+        SmartDashboard.putData(autonomousChooser);
+    }
+
     /**
      * Use this to pass the autonomous command to the main {@link Robot} class.
      *
@@ -411,27 +448,8 @@ public class RobotContainer
     public Command getAutonomousCommand()
     {
         // To prevent crashing, make sure we have all the necessary subsystems:
-        if (driveTrain.isEmpty() || shooter.isEmpty() || indexer.isEmpty())
-        {
-            return null;
-        }
-
-        // TODO: Test and tune this code! Will maybe have to drive out a little further after shooting to leave the tarmac.
-
-        // Create an inline sequential command that:
-        //   1) Drives to the configured position;
-        //   2) Starts the shooter motor at high speed;
-        //   3) Waits for the shooter motor to get uip to speed;
-        //   4) Runs the upper indexer to shoot the cargo; and
-        //   5) Stops the shooter motor.
-        return new SequentialCommandGroup(
-            new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
-            new InstantCommand(() ->
-                shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
-                shooter.get()),
-            new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
-            new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
-            new InstantCommand(() -> shooter.get().stop(), shooter.get())
-        );
+        return driveTrain.isEmpty() || shooter.isEmpty() || indexer.isEmpty()
+            ? null
+            : autonomousChooser.getSelected();
     }
 }
