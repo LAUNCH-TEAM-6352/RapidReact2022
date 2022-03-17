@@ -435,9 +435,11 @@ public class RobotContainer
                     shooter.get()),
                 new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
                 new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
-                new InstantCommand(() -> shooter.get().stop(), shooter.get()));
+                new InstantCommand(() -> shooter.get().stop(), shooter.get())
+                )
+            );
 
-        SmartDashboard.putData(autonomousChooser);
+        SmartDashboard.putData(chooser);
     }
 
     /**
@@ -448,8 +450,8 @@ public class RobotContainer
     public Command getAutonomousCommand()
     {
         // To prevent crashing, make sure we have all the necessary subsystems:
-        return driveTrain.isEmpty() || shooter.isEmpty() || indexer.isEmpty()
+        return driveTrain.isEmpty() || shooter.isEmpty() || indexer.isEmpty() || autonomousChooser.isEmpty()
             ? null
-            : autonomousChooser.getSelected();
+            : autonomousChooser.get().getSelected();
     }
 }
