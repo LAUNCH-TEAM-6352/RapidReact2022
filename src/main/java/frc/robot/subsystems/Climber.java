@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -46,8 +45,8 @@ public class Climber extends SubsystemBase
         this.gamepad = gamepad;
 
         // Initialize the motor controllers:
-        leftMotor.setNeutralMode(NeutralMode.Coast);
-        rightMotor.setNeutralMode(NeutralMode.Coast);
+        leftMotor.setNeutralMode(ClimberConstants.motorNeutralMode);
+        rightMotor.setNeutralMode(ClimberConstants.motorNeutralMode);
         leftMotor.setInverted(ClimberConstants.isLeftMotorInverted);
         rightMotor.setInverted(ClimberConstants.isRightMotorInverted);
 		rightMotor.set(ControlMode.Follower, leftMotor.getDeviceID());
