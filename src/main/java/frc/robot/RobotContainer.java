@@ -416,19 +416,13 @@ public class RobotContainer
 
     private void configureSmartDashboard(SendableChooser<Command> chooser)
     {
-        // Configure the sendable chooser for the autonomous program:
-        chooser.setDefaultOption("Auto Nothing", new InstantCommand(() -> {}));
-
-        chooser.addOption("Auto Leave Tarmac",
-            new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
-
         // Create an inline sequential command that:
         //   1) Drives to the configured position;
         //   2) Starts the shooter motor at high speed;
         //   3) Waits for the shooter motor to get up to speed;
         //   4) Runs the upper indexer to shoot the cargo; and
         //   5) Stops the shooter motor.
-        chooser.addOption("Auto One Cargo",
+        chooser.setDefaultOption("Auto One Cargo",
             new SequentialCommandGroup(
                 new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
                 new InstantCommand(() ->
@@ -439,6 +433,11 @@ public class RobotContainer
                 new InstantCommand(() -> shooter.get().stop(), shooter.get())
                 )
             );
+
+        chooser.addOption("Auto Leave Tarmac",
+            new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
+
+        chooser.addOption("Auto Nothing", new InstantCommand(() -> {}));
 
         SmartDashboard.putData(chooser);
     }
