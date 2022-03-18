@@ -138,17 +138,18 @@ public class Shooter extends SubsystemBase
 	@Override
 	public void periodic()
 	{
-		// Velocity from motor controller is units per 100ms where there are
-		// countsPerRevolution * ticksPerCount units per revolution.
-		// 600.0 is the number of 100ms per minute.
-        double leftVelocity = 600.0 * leftMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
-        double rightVelocity = 600.0 * rightMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
 
-		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey, leftVelocity);	
-		SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,  rightVelocity);
+		// SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey, leftVelocity);	
+		// SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,  rightVelocity);
 
         if (isTimingStarted)
         {
+            // Velocity from motor controller is units per 100ms where there are
+            // countsPerRevolution * ticksPerCount units per revolution.
+            // 600.0 is the number of 100ms per minute.
+            double leftVelocity = 600.0 * leftMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
+            //double rightVelocity = 600.0 * rightMotor.getSelectedSensorVelocity() / ShooterConstants.countsPerRevolution / ShooterConstants.ticksPerCount;
+
             if (Math.abs(leftVelocity - targetVelocity) < 10 && Math.abs(leftVelocity - lastVelocity) < 10)
             {
                 isTimingStarted = false;

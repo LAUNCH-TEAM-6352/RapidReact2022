@@ -96,7 +96,7 @@ public final class Constants
 
         // Default values for Smart Dashboard:
         public static final double defaultPercentage = 0.5;
-        public static final double defaultOpenLoopRampRate = 1.0;
+        public static final double defaultOpenLoopRampRate = 0.0;
         public static final double defaultClosedLoopRampRate = 2.0;
 	}
     
