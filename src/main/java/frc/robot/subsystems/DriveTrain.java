@@ -113,7 +113,7 @@ public class DriveTrain extends SubsystemBase
         leftMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
         rightMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
         openLoopRampRate = SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
-       setOpenLoopRampRate(openLoopRampRate);
+        setOpenLoopRampRate(openLoopRampRate);
     }
 
     /**

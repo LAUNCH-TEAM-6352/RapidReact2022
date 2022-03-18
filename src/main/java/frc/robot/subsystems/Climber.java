@@ -58,7 +58,7 @@ public class Climber extends SubsystemBase
     }
 
     /**
-     * Runs the hook moors at the spexcified percentage speed.
+     * Runs the hook moors at the specified percentage speed.
      * 
      * @param speed
      */
