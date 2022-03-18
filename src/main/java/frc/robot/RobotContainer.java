@@ -95,24 +95,28 @@ public class RobotContainer
         gameData = DriverStation.getGameSpecificMessage().toLowerCase();
 
         // Create OI devices:
-		gamepad = DriverStation.isJoystickConnected(OIConstants.gamepadPort)
-            ? new XboxController(OIConstants.gamepadPort)
-            : null;
-        leftStick = DriverStation.isJoystickConnected(OIConstants.leftJoystickPort)
-            ? new Joystick(OIConstants.leftJoystickPort)
-            : null;
-        rightStick = DriverStation.isJoystickConnected(OIConstants.rightJoystickPort)
-            ? new Joystick(OIConstants.rightJoystickPort)
-            : null;
+		// gamepad = DriverStation.isJoystickConnected(OIConstants.gamepadPort)
+        //     ? new XboxController(OIConstants.gamepadPort)
+        //     : null;
+        // leftStick = DriverStation.isJoystickConnected(OIConstants.leftJoystickPort)
+        //     ? new Joystick(OIConstants.leftJoystickPort)
+        //     : null;
+        // rightStick = DriverStation.isJoystickConnected(OIConstants.rightJoystickPort)
+        //     ? new Joystick(OIConstants.rightJoystickPort)
+        //     : null;
+
+        gamepad = new XboxController(OIConstants.gamepadPort);
+        leftStick = new Joystick(OIConstants.leftJoystickPort);
+        rightStick = new Joystick(OIConstants.rightJoystickPort);
 
         SmartDashboard.putBoolean("Gamepad Detected", gamepad != null);
         SmartDashboard.putBoolean("Left Joystick Detected", leftStick != null);
         SmartDashboard.putBoolean("Right Joystick Detected", rightStick != null);
 
         // Start capturing video from the USB camera:
-        UsbCamera camera = CameraServer.startAutomaticCapture();
-        camera.setResolution(640, 480);
-
+        //UsbCamera camera = CameraServer.startAutomaticCapture();
+        //camera.setResolution(640, 480);
+        //camera.setResolution(480, 360);
 
         // Create pneumatics compressor:
         compressor = gameData.isBlank() || gameData.contains("-p-") ? Optional.of(new Compressor(PneumaticsConstants.moduleId, PneumaticsConstants.moduleType)) : Optional.empty();
@@ -416,7 +420,7 @@ public class RobotContainer
     private void configureSmartDashboard(SendableChooser<Command> chooser)
     {
         // Configure the sendable chooser for the autonomous program:
-        chooser.setDefaultOption("Auto Stub", new InstantCommand(() -> {}));
+        chooser.setDefaultOption("Auto Nothing", new InstantCommand(() -> {}));
 
         chooser.addOption("Auto Leave Tarmac",
             new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
@@ -424,7 +428,7 @@ public class RobotContainer
         // Create an inline sequential command that:
         //   1) Drives to the configured position;
         //   2) Starts the shooter motor at high speed;
-        //   3) Waits for the shooter motor to get uip to speed;
+        //   3) Waits for the shooter motor to get up to speed;
         //   4) Runs the upper indexer to shoot the cargo; and
         //   5) Stops the shooter motor.
         chooser.addOption("Auto One Cargo",

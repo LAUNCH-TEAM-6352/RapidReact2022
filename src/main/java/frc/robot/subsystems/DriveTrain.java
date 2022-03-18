@@ -252,13 +252,13 @@ public class DriveTrain extends SubsystemBase
         if (!leftMotors.isEmpty())
         {
             SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPositionKey, leftMotors.get(0).getEncoder().getPosition());
-            SmartDashboard.putNumber("DT Left Applied", leftMotors.get(0).getAppliedOutput());
+            // SmartDashboard.putNumber("DT Left Applied", leftMotors.get(0).getAppliedOutput());
         }
 
         if (!rightMotors.isEmpty())
         {
             SmartDashboard.putNumber(DashboardConstants.driveTrainRightPositionKey, rightMotors.get(0).getEncoder().getPosition());
-            SmartDashboard.putNumber("DT Right Applied", rightMotors.get(0).getAppliedOutput());
+            // SmartDashboard.putNumber("DT Right Applied", rightMotors.get(0).getAppliedOutput());
         }
 
         // See if the open loop ramp rate has been changed on the Smart Dashboard:

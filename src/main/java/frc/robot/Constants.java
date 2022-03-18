@@ -79,8 +79,8 @@ public final class Constants
         // If motors should coast or brake to a stop:
         public static final IdleMode idleMode = IdleMode.kCoast;
 
-        public static final double defaultAutoTargetPosition = -1000;
-        public static final double defaultAutoLeaveTarmacPosition = -2000;
+        public static final double defaultAutoTargetPosition = 30;
+        public static final double defaultAutoLeaveTarmacPosition = 30;
 
         // Tolerance for determining if at target position:
         public static final double positionTolerance = 10;
@@ -91,8 +91,8 @@ public final class Constants
         public static final double defaultPidD = 1.0;
         public static final double defaultPidIZ = 10.0;
         public static final double defaultPidFF = 0.0;
-        public static final double defaultPidMinOutput = -0.5;
-        public static final double defaultPidMaxOutput = +0.5;
+        public static final double defaultPidMinOutput = -0.25;
+        public static final double defaultPidMaxOutput = +0.25;
 
         // Default values for Smart Dashboard:
         public static final double defaultPercentage = 0.5;
@@ -113,8 +113,8 @@ public final class Constants
         public static final int rightMotorChannel = 28;
         public static final boolean isLeftMotorInverted = true;
         public static final boolean isRightMotorInverted = false;
-        public static final double defaultHookExtendSpeed = 0.50;
-        public static final double defaultHookRetractSpeed = -0.50;
+        public static final double defaultHookExtendSpeed = 0.70;
+        public static final double defaultHookRetractSpeed = -0.70;
         public static final NeutralMode motorNeutralMode = NeutralMode.Brake;
 
         // These are the pneumatics chnnels for moving the climber mechanism up and down:
