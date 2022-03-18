@@ -6,8 +6,6 @@ package frc.robot;
 
 import java.util.Optional;
 
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.cscore.UsbCamera;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID;
@@ -234,7 +232,6 @@ public class RobotContainer
         new JoystickButton(gamepad, Button.kY.value)
             .whileHeld(new RunIndexerUpper(indexer, DashboardConstants.indexerUpperInPercentageKey));
 
-        // TODO: Create binding to run upper indexer out?
     }
 
     private void configureButtonBindings(Intake intake)
