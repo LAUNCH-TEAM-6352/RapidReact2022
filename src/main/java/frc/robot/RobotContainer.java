@@ -122,7 +122,7 @@ public class RobotContainer
     	// Create subsystems:
 		driveTrain = gameData.isBlank() || gameData.contains("-dt-") ? Optional.of(new DriveTrain()) : Optional.empty();
 
-        shooter = gameData.isBlank() || gameData.contains("-s-") ? Optional.of(new Shooter()) : Optional.empty();
+        shooter = gameData.isBlank() || gameData.contains("-s-") ? Optional.of(new Shooter(gamepad)) : Optional.empty();
 
         indexer = gameData.isBlank() || gameData.contains("-idx-") ? Optional.of(new Indexer()) : Optional.empty();
 

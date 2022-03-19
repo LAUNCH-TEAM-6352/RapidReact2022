@@ -12,6 +12,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DashboardConstants;
@@ -36,11 +38,15 @@ public class Shooter extends SubsystemBase
     // Indicates if we have started timeing an operatrion:
     private boolean isTimingStarted = false;
 
+    private final XboxController gamepad;
+
 	/**
 	 * Creates an instance.
 	 */
-	public Shooter()
+	public Shooter(XboxController gamepad)
 	{
+        this.gamepad = gamepad;
+
 		leftMotor.setInverted(ShooterConstants.isLeftMotorInverted);
 		rightMotor.setInverted(ShooterConstants.isRightMotorInverted);
 
@@ -132,6 +138,7 @@ public class Shooter extends SubsystemBase
         isRunning = false;
         isAtTargetVelocity = false;
         SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
+        setGamepadRumble(0);
 
 	}
 
@@ -156,6 +163,7 @@ public class Shooter extends SubsystemBase
                 long stopTime = RobotController.getFPGATime();
                 isAtTargetVelocity = true;
                 SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
+                setGamepadRumble(1);
                 // The FPGA time is in microseconds, so divide by 1000000.0 to get seconds:
                 SmartDashboard.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
             }
@@ -165,4 +173,12 @@ public class Shooter extends SubsystemBase
             }
         }
 	}
+
+    private void setGamepadRumble(double value)
+    {
+        if (gamepad != null)
+        {
+            gamepad.setRumble(RumbleType.kLeftRumble, value);
+        }
+    }
 }
