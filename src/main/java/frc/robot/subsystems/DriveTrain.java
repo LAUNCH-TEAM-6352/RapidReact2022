@@ -112,6 +112,7 @@ public class DriveTrain extends SubsystemBase
     {
         leftMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
         rightMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
+        openLoopRampRate = SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
         setOpenLoopRampRate(openLoopRampRate);
     }
 
@@ -176,8 +177,8 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, leftOut);
         setPercentage(rightMotors, rightOut);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, leftOut);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, rightOut);
+        //SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, leftOut);
+        //SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, rightOut);
     }
 
     /**
@@ -262,13 +263,13 @@ public class DriveTrain extends SubsystemBase
         }
 
         // See if the open loop ramp rate has been changed on the Smart Dashboard:
-        double dashboardRampRate = SmartDashboard.getNumber(
-            DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
-        if (dashboardRampRate != openLoopRampRate)
-        {
-            openLoopRampRate = dashboardRampRate;
-            setOpenLoopRampRate(openLoopRampRate);
-        }
+        // double dashboardRampRate = SmartDashboard.getNumber(
+        //     DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
+        // if (dashboardRampRate != openLoopRampRate)
+        // {
+        //     openLoopRampRate = dashboardRampRate;
+        //     setOpenLoopRampRate(openLoopRampRate);
+        // }
     }
 
     /**

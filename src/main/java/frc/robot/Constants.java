@@ -79,8 +79,8 @@ public final class Constants
         // If motors should coast or brake to a stop:
         public static final IdleMode idleMode = IdleMode.kCoast;
 
-        public static final double defaultAutoTargetPosition = 30;
-        public static final double defaultAutoLeaveTarmacPosition = 30;
+        public static final double defaultAutoTargetPosition = 28;
+        public static final double defaultAutoLeaveTarmacPosition = 28;
 
         // Tolerance for determining if at target position:
         public static final double positionTolerance = 10;
@@ -96,7 +96,7 @@ public final class Constants
 
         // Default values for Smart Dashboard:
         public static final double defaultPercentage = 0.5;
-        public static final double defaultOpenLoopRampRate = 1.0;
+        public static final double defaultOpenLoopRampRate = 0.0;
         public static final double defaultClosedLoopRampRate = 2.0;
 	}
     

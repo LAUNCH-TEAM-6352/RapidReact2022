@@ -45,8 +45,8 @@ public class DriveToRelativePosition extends CommandBase
         {
             position = SmartDashboard.getNumber(key, 0.0);
         }
-        driveTrain.configureForPidControl();
         driveTrain.resetPosition();
+        driveTrain.configureForPidControl();
         driveTrain.driveToPosition(position);
     }
 
