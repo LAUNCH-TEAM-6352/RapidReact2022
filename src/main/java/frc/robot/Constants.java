@@ -172,6 +172,7 @@ public final class Constants
 
 		public static final double defaultLowVelocity = 700;
 		public static final double defaultHighVelocity = 1350;
+		public static final double defaultAutoVelocity = 1400;
 		public static final double defaultPercentage = 0.5;
 
         // This is the max output of the 4:1 gearbox.
@@ -225,6 +226,7 @@ public final class Constants
 
 		public static final String shooterLowTargetVelocityKey = "Shooter Low RPM";
 		public static final String shooterHighTargetVelocityKey = "Shooter High RPM";
+		public static final String shooterAutoTargetVelocityKey = "Shooter Auto RPM";
 		public static final String shooterSetVelocityKey = "Shooter Vel Set";
 		public static final String shooterCurrentVelocityLeftKey = "Shooter RPM Left";
 		public static final String shooterCurrentVelocityRightKey = "Shooter RPM Rght";

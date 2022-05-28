@@ -122,7 +122,7 @@ public class RobotContainer
     	// Create subsystems:
 		driveTrain = gameData.isBlank() || gameData.contains("-dt-") ? Optional.of(new DriveTrain()) : Optional.empty();
 
-        shooter = gameData.isBlank() || gameData.contains("-s-") ? Optional.of(new Shooter()) : Optional.empty();
+        shooter = gameData.isBlank() || gameData.contains("-s-") ? Optional.of(new Shooter(gamepad)) : Optional.empty();
 
         indexer = gameData.isBlank() || gameData.contains("-idx-") ? Optional.of(new Indexer()) : Optional.empty();
 
@@ -352,6 +352,7 @@ public class RobotContainer
     {
         SmartDashboard.putNumber(DashboardConstants.shooterLowTargetVelocityKey, ShooterConstants.defaultLowVelocity);
         SmartDashboard.putNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity);
+        SmartDashboard.putNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultAutoVelocity);
         SmartDashboard.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
         SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
 
@@ -426,7 +427,7 @@ public class RobotContainer
             new SequentialCommandGroup(
                 new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
                 new InstantCommand(() ->
-                    shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
+                    shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
                     shooter.get()),
                 new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
                 new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
