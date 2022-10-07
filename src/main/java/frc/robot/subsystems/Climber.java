@@ -12,8 +12,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SmartDashboardEx;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.PneumaticsConstants;
@@ -121,7 +121,7 @@ public class Climber extends SubsystemBase
     @Override
     public void periodic()
     {
-        SmartDashboard.putBoolean(DashboardConstants.climberHooksAtLimit, !(isAtHookExtendLimit() || isAtHookRetractLimit()));
+        SmartDashboardEx.putBoolean(DashboardConstants.climberHooksAtLimit, !(isAtHookExtendLimit() || isAtHookRetractLimit()));
     }
 
     private void setGamepadRumble(double value)

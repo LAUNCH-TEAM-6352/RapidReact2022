@@ -245,5 +245,7 @@ public final class Constants
         public static final String climberHooksExtendSpeedKey = "Climber Hooks Extend %";
         public static final String climberHooksRetractSpeedKey = "Climber Hooks Retract %";
         public static final String climberHooksAtLimit = "Climber Hooks Limit";
+
+        public static final String throttleDashboardOutput = "Throttle Dashboard Output";
     }
 }

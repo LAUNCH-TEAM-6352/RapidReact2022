@@ -14,8 +14,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.SmartDashboardEx;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.ShooterConstants;
 
@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase
 		// 600.0 is the number of 100ms per minute.
 		var unitsPer100Ms =
 			velocity * ShooterConstants.countsPerRevolution * ShooterConstants.ticksPerCount / 600.0;
-		SmartDashboard.putNumber(DashboardConstants.shooterSetVelocityKey, unitsPer100Ms);
+		SmartDashboardEx.putNumber(DashboardConstants.shooterSetVelocityKey, unitsPer100Ms);
         targetVelocity = velocity;
         lastVelocity = 0;
         startTime = RobotController.getFPGATime();
@@ -137,7 +137,7 @@ public class Shooter extends SubsystemBase
 		setPercentage(0);
         isRunning = false;
         isAtTargetVelocity = false;
-        SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
+        SmartDashboardEx.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
         setGamepadRumble(0);
 
 	}
@@ -146,8 +146,8 @@ public class Shooter extends SubsystemBase
 	public void periodic()
 	{
 
-		// SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey, leftVelocity);	
-		// SmartDashboard.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,  rightVelocity);
+		// SmartDashboardEx.putNumber(DashboardConstants.shooterCurrentVelocityLeftKey, leftVelocity);	
+		// SmartDashboardEx.putNumber(DashboardConstants.shooterCurrentVelocityRightKey,  rightVelocity);
 
         if (isTimingStarted)
         {
@@ -162,10 +162,10 @@ public class Shooter extends SubsystemBase
                 isTimingStarted = false;
                 long stopTime = RobotController.getFPGATime();
                 isAtTargetVelocity = true;
-                SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
+                SmartDashboardEx.putBoolean(DashboardConstants.shooterAtSpeedKey, true);
                 setGamepadRumble(1);
                 // The FPGA time is in microseconds, so divide by 1000000.0 to get seconds:
-                SmartDashboard.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
+                SmartDashboardEx.putNumber(DashboardConstants.shooterRampUpTimeKey, (stopTime - startTime) / 1000000.0);
             }
             else
             {

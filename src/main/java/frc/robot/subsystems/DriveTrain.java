@@ -17,9 +17,9 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveTrainConstants;
+import frc.robot.SmartDashboardEx;
 import frc.robot.Constants.DashboardConstants;
 
 public class DriveTrain extends SubsystemBase
@@ -91,18 +91,18 @@ public class DriveTrain extends SubsystemBase
 
         // Set closed loop ramp rate on the leader:
         pidLeader.setClosedLoopRampRate(
-            SmartDashboard.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate));
+            SmartDashboardEx.getNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate));
         
         // Set PID controller parameters on the leader:
         var pidController = pidLeader.getPIDController();
-        pidController.setP(SmartDashboard.getNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP));
-        pidController.setI(SmartDashboard.getNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI));
-        pidController.setD(SmartDashboard.getNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD));
-        pidController.setIZone(SmartDashboard.getNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ));
-        pidController.setFF(SmartDashboard.getNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF));
+        pidController.setP(SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP));
+        pidController.setI(SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI));
+        pidController.setD(SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD));
+        pidController.setIZone(SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ));
+        pidController.setFF(SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF));
         pidController.setOutputRange(
-            SmartDashboard.getNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput),
-            SmartDashboard.getNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput));
+            SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput),
+            SmartDashboardEx.getNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput));
     }
 
     /**
@@ -112,7 +112,7 @@ public class DriveTrain extends SubsystemBase
     {
         leftMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
         rightMotors.forEach((motor) -> motor.follow(ExternalFollower.kFollowerDisabled, 0));
-        openLoopRampRate = SmartDashboard.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
+        openLoopRampRate = SmartDashboardEx.getNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
         setOpenLoopRampRate(openLoopRampRate);
     }
 
@@ -126,7 +126,7 @@ public class DriveTrain extends SubsystemBase
     {
         targetPosition = position;
         pidLeader.getPIDController().setReference(position, ControlType.kPosition);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidTarget, position);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidTarget, position);
     }
 
     /**
@@ -177,8 +177,8 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, leftOut);
         setPercentage(rightMotors, rightOut);
 
-        //SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, leftOut);
-        //SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, rightOut);
+        //SmartDashboardEx.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, leftOut);
+        //SmartDashboardEx.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, rightOut);
     }
 
     /**
@@ -193,8 +193,8 @@ public class DriveTrain extends SubsystemBase
         setPercentage(leftMotors, percentage);
         setPercentage(rightMotors, percentage);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, percentage);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, percentage);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, percentage);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, percentage);
     }
 
 	/**
@@ -205,8 +205,8 @@ public class DriveTrain extends SubsystemBase
         leftMotors.forEach((motor) -> motor.stopMotor());
         rightMotors.forEach((motor) -> motor.stopMotor());
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, 0);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, 0);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainLeftPercentOutputKey, 0);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainRightPercentOutputKey, 0);
 	}
 
     /**
@@ -252,18 +252,18 @@ public class DriveTrain extends SubsystemBase
     {
         if (!leftMotors.isEmpty())
         {
-            SmartDashboard.putNumber(DashboardConstants.driveTrainLeftPositionKey, leftMotors.get(0).getEncoder().getPosition());
-            // SmartDashboard.putNumber("DT Left Applied", leftMotors.get(0).getAppliedOutput());
+            SmartDashboardEx.putNumber(DashboardConstants.driveTrainLeftPositionKey, leftMotors.get(0).getEncoder().getPosition());
+            // SmartDashboardEx.putNumber("DT Left Applied", leftMotors.get(0).getAppliedOutput());
         }
 
         if (!rightMotors.isEmpty())
         {
-            SmartDashboard.putNumber(DashboardConstants.driveTrainRightPositionKey, rightMotors.get(0).getEncoder().getPosition());
-            // SmartDashboard.putNumber("DT Right Applied", rightMotors.get(0).getAppliedOutput());
+            SmartDashboardEx.putNumber(DashboardConstants.driveTrainRightPositionKey, rightMotors.get(0).getEncoder().getPosition());
+            // SmartDashboardEx.putNumber("DT Right Applied", rightMotors.get(0).getAppliedOutput());
         }
 
         // See if the open loop ramp rate has been changed on the Smart Dashboard:
-        // double dashboardRampRate = SmartDashboard.getNumber(
+        // double dashboardRampRate = SmartDashboardEx.getNumber(
         //     DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
         // if (dashboardRampRate != openLoopRampRate)
         // {

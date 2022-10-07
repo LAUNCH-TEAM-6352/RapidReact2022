@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.ClimberConstants;
 import frc.robot.Constants.DashboardConstants;
 import frc.robot.Constants.DriveTrainConstants;
@@ -107,9 +106,9 @@ public class RobotContainer
         leftStick = new Joystick(OIConstants.leftJoystickPort);
         rightStick = new Joystick(OIConstants.rightJoystickPort);
 
-        SmartDashboard.putBoolean("Gamepad Detected", gamepad != null);
-        SmartDashboard.putBoolean("Left Joystick Detected", leftStick != null);
-        SmartDashboard.putBoolean("Right Joystick Detected", rightStick != null);
+        SmartDashboardEx.putBoolean("Gamepad Detected", gamepad != null);
+        SmartDashboardEx.putBoolean("Left Joystick Detected", leftStick != null);
+        SmartDashboardEx.putBoolean("Right Joystick Detected", rightStick != null);
 
         // Start capturing video from the USB camera:
         //UsbCamera camera = CameraServer.startAutomaticCapture();
@@ -194,13 +193,13 @@ public class RobotContainer
         // Run/stop the shooter at the speed for the low target:
         new JoystickButton(gamepad, Button.kBack.value)
             .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
-                SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
                 shooter));
         
         // Run/stop the shooter at the speed for the high target:
         new JoystickButton(gamepad, Button.kStart.value)
             .whenPressed(new InstantCommand(() -> shooter.toggleVelocity(
-                SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
                 shooter));
     }
 
@@ -292,6 +291,7 @@ public class RobotContainer
 
         autonomousChooser.ifPresent(this::configureSmartDashboard);
 
+        SmartDashboardEx.putBoolean(DashboardConstants.throttleDashboardOutput, true);
     }
 
     /**
@@ -301,41 +301,41 @@ public class RobotContainer
      */
     private void configureSmartDashboard(DriveTrain driveTrain)
     {
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPercentageKey, DriveTrainConstants.defaultPercentage);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPercentageKey, DriveTrainConstants.defaultPercentage);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainOpenLoopRampRateKey, DriveTrainConstants.defaultOpenLoopRampRate);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainClosedLoopRampRateKey, DriveTrainConstants.defaultClosedLoopRampRate);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidPKey, DriveTrainConstants.defaultPidP);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidIKey, DriveTrainConstants.defaultPidI);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidDKey, DriveTrainConstants.defaultPidD);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidIZKey, DriveTrainConstants.defaultPidIZ);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidFFKey, DriveTrainConstants.defaultPidFF);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidMinOutputKey, DriveTrainConstants.defaultPidMinOutput);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainPidMaxOutputKey, DriveTrainConstants.defaultPidMaxOutput);
 
-        SmartDashboard.putNumber(DashboardConstants.driveTrainAutoTargetPositionKey, DriveTrainConstants.defaultAutoTargetPosition);
-        SmartDashboard.putNumber(DashboardConstants.driveTrainAutoLeaveTarmacPositionKey, DriveTrainConstants.defaultAutoLeaveTarmacPosition);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainAutoTargetPositionKey, DriveTrainConstants.defaultAutoTargetPosition);
+        SmartDashboardEx.putNumber(DashboardConstants.driveTrainAutoLeaveTarmacPositionKey, DriveTrainConstants.defaultAutoLeaveTarmacPosition);
         
-        SmartDashboard.putData("Run Drive Train", new StartEndCommand(
+        SmartDashboardEx.putData("Run Drive Train", new StartEndCommand(
             () -> driveTrain.setRawMotorOutputs(
-                SmartDashboard.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.driveTrainPercentageKey, 0)),
             () -> driveTrain.stop(),
             driveTrain
             )
         );
 
         // The following deal with driving to a specified position:
-        SmartDashboard.putData("Drive to Target Pos",
+        SmartDashboardEx.putData("Drive to Target Pos",
             new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10));
-        SmartDashboard.putData("Drive to Leave Tarmac Pos",
+        SmartDashboardEx.putData("Drive to Leave Tarmac Pos",
             new DriveToRelativePosition(driveTrain, DashboardConstants.driveTrainAutoLeaveTarmacPositionKey).withTimeout(10));
-        SmartDashboard.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
+        SmartDashboardEx.putData("Reset DT Pos", new InstantCommand(() -> driveTrain.resetPosition()));
 
         // The following are to be used to quickly test the individual drive train motors:
         for (int i = 0; i < DriveTrainConstants.motorNames.length; i++)
         {
             var motorName = DriveTrainConstants.motorNames[i];
-            SmartDashboard.putData("Test " + motorName.abbreviation + " (" + motorName.channel + ")",
+            SmartDashboardEx.putData("Test " + motorName.abbreviation + " (" + motorName.channel + ")",
                 new StartEndCommand(
                     () -> driveTrain.set(motorName.channel, 0.25),
                     () -> driveTrain.stop(motorName.channel),
@@ -350,31 +350,31 @@ public class RobotContainer
      */
     private void configureSmartDashboard(Shooter shooter)
     {
-        SmartDashboard.putNumber(DashboardConstants.shooterLowTargetVelocityKey, ShooterConstants.defaultLowVelocity);
-        SmartDashboard.putNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity);
-        SmartDashboard.putNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultAutoVelocity);
-        SmartDashboard.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
-        SmartDashboard.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
+        SmartDashboardEx.putNumber(DashboardConstants.shooterLowTargetVelocityKey, ShooterConstants.defaultLowVelocity);
+        SmartDashboardEx.putNumber(DashboardConstants.shooterHighTargetVelocityKey, ShooterConstants.defaultHighVelocity);
+        SmartDashboardEx.putNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultAutoVelocity);
+        SmartDashboardEx.putNumber(DashboardConstants.shooterTargetPercentageKey, ShooterConstants.defaultPercentage);
+        SmartDashboardEx.putBoolean(DashboardConstants.shooterAtSpeedKey, false);
 
-        SmartDashboard.putData("Run Shooter Low RPM", new StartEndCommand(
+        SmartDashboardEx.putData("Run Shooter Low RPM", new StartEndCommand(
             () -> shooter.setVelocity(
-                SmartDashboard.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.shooterLowTargetVelocityKey, 0)),
             () -> shooter.stop(),
             shooter
             )
         );
 
-        SmartDashboard.putData("Run Shooter High RPM", new StartEndCommand(
+        SmartDashboardEx.putData("Run Shooter High RPM", new StartEndCommand(
             () -> shooter.setVelocity(
-                SmartDashboard.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.shooterHighTargetVelocityKey, 0)),
             () -> shooter.stop(),
             shooter
             )
         );
 
-        SmartDashboard.putData("Run Shooter %", new StartEndCommand(
+        SmartDashboardEx.putData("Run Shooter %", new StartEndCommand(
             () -> shooter.setPercentage(
-                SmartDashboard.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
+                SmartDashboardEx.getNumber(DashboardConstants.shooterTargetPercentageKey, 0)),
             () -> shooter.stop(),
             shooter
             )
@@ -388,31 +388,31 @@ public class RobotContainer
      */
     private void configureSmartDashboard(Indexer indexer)
     {
-        SmartDashboard.putNumber(DashboardConstants.indexerLowerInPercentageKey, IndexerConstants.defaultLowerMotorInSpeed);
-        SmartDashboard.putNumber(DashboardConstants.indexerLowerOutPercentageKey, IndexerConstants.defaultLowerMotorOutSpeed);
-        SmartDashboard.putNumber(DashboardConstants.indexerUpperInPercentageKey, IndexerConstants.defaultUpperMotorInSpeed);
-        SmartDashboard.putNumber(DashboardConstants.indexerUpperOutPercentageKey, IndexerConstants.defaultUpperMotorOutSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.indexerLowerInPercentageKey, IndexerConstants.defaultLowerMotorInSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.indexerLowerOutPercentageKey, IndexerConstants.defaultLowerMotorOutSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.indexerUpperInPercentageKey, IndexerConstants.defaultUpperMotorInSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.indexerUpperOutPercentageKey, IndexerConstants.defaultUpperMotorOutSpeed);
     }
 
     private void configureSmartDashboard(Intake intake)
     {
-        SmartDashboard.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultMotorInSpeed);
-        SmartDashboard.putNumber(DashboardConstants.intakeOutPercentageKey, IntakeConstants.defaultMotorOutSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.intakeInPercentageKey, IntakeConstants.defaultMotorInSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.intakeOutPercentageKey, IntakeConstants.defaultMotorOutSpeed);
 
-        SmartDashboard.putData("Extend Intake", new InstantCommand(() -> intake.extend(), intake));
-        SmartDashboard.putData("Retract Intake", new InstantCommand(() -> intake.retract(), intake));
+        SmartDashboardEx.putData("Extend Intake", new InstantCommand(() -> intake.extend(), intake));
+        SmartDashboardEx.putData("Retract Intake", new InstantCommand(() -> intake.retract(), intake));
     }
 
     private void configureSmartDashboard(Climber climber)
     {
-        SmartDashboard.putNumber(DashboardConstants.climberHooksExtendSpeedKey, ClimberConstants.defaultHookExtendSpeed);
-        SmartDashboard.putNumber(DashboardConstants.climberHooksRetractSpeedKey, ClimberConstants.defaultHookRetractSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.climberHooksExtendSpeedKey, ClimberConstants.defaultHookExtendSpeed);
+        SmartDashboardEx.putNumber(DashboardConstants.climberHooksRetractSpeedKey, ClimberConstants.defaultHookRetractSpeed);
 
-        SmartDashboard.putData("Climber Up", new InstantCommand(() -> climber.moveClimberUp(), climber));
-        SmartDashboard.putData("Climber Down", new InstantCommand(() -> climber.moveClimberDown(), climber));
+        SmartDashboardEx.putData("Climber Up", new InstantCommand(() -> climber.moveClimberUp(), climber));
+        SmartDashboardEx.putData("Climber Down", new InstantCommand(() -> climber.moveClimberDown(), climber));
 
-        SmartDashboard.putData("Extend Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksExtendSpeedKey));
-        SmartDashboard.putData("Retract Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksRetractSpeedKey));
+        SmartDashboardEx.putData("Extend Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksExtendSpeedKey));
+        SmartDashboardEx.putData("Retract Climber Hooks", new MoveClimberHooks(climber, DashboardConstants.climberHooksRetractSpeedKey));
     }
 
     private void configureSmartDashboard(SendableChooser<Command> chooser)
@@ -427,7 +427,7 @@ public class RobotContainer
             new SequentialCommandGroup(
                 new DriveToRelativePosition(driveTrain.get(), DashboardConstants.driveTrainAutoTargetPositionKey).withTimeout(10),
                 new InstantCommand(() ->
-                    shooter.get().setVelocity(SmartDashboard.getNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
+                    shooter.get().setVelocity(SmartDashboardEx.getNumber(DashboardConstants.shooterAutoTargetVelocityKey, ShooterConstants.defaultHighVelocity)),
                     shooter.get()),
                 new WaitUntilCommand(() -> shooter.get().isAtTargetVelocity()).withTimeout(3),
                 new RunIndexerUpper(indexer.get(), DashboardConstants.indexerUpperInPercentageKey).withTimeout(3),
@@ -440,7 +440,7 @@ public class RobotContainer
 
         chooser.addOption("Auto Nothing", new InstantCommand(() -> {}));
 
-        SmartDashboard.putData(chooser);
+        SmartDashboardEx.putData(chooser);
     }
 
     /**
